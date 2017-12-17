@@ -5,12 +5,25 @@
   Time: 23:03
   To change this template use File | Settings | File Templates.
 --%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
+<%@ taglib prefix="s" uri="/struts-tags"%>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+         pageEncoding="ISO-8859-1"%>
 <html>
   <head>
-    <title>$Title$</title>
+    <title>Login</title>
   </head>
   <body>
-Oi, td bem? Send nudes
+<form id = "loginForm" action="login" method="post">
+  <div class="form-group">
+    <label for="lg_username" class="sr-only">Username: </label>
+    <input type="number" class="form-control" required="true" id="lg_username" name="cc" placeholder="cc">
+  </div>
+  <div class="form-group">
+    <label for="lg_password" class="sr-only">Password: </label>
+    <input type="password" class="form-control" required="true" id="lg_password" name="password" placeholder="password">
+  </div>
+<button action="submit">Login</button>
+</form>
   </body>
 </html>

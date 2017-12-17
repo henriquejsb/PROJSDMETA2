@@ -1123,6 +1123,7 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
             oiS = new ObjectInputStream(fiS);
             res = oiS.readObject();
         } catch (IOException | ClassNotFoundException e) {
+            System.out.println("Merda aqui");
             System.out.println("Erro a ler o ficheiro " + fich);
             return null;
         } finally {
@@ -1130,6 +1131,7 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
                 try {
                     oiS.close();
                 } catch (IOException e) {
+                    System.out.println("Merda em baixo");
                     System.out.println("Erro a fechar o ficheiro " + fich);
                     
                 }
