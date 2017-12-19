@@ -17,6 +17,10 @@
     Adicionar WebSockets para dar update às pessoas que votaram até agora
 
 
+
+
+
+
     --%>
 </head>
 <body>

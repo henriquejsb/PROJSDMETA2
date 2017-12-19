@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!DOCTYPE struts PUBLIC
-        "-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"
-        "http://struts.apache.org/dtds/struts-2.5.dtd">
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
 
 <struts>
 
@@ -11,70 +11,129 @@
     <constant name="struts.ui.theme" value="simple" />
     <constant name="struts.action.excludePattern" value="/ws"/>
 
+
+
+
+
     <package name="meta2" extends="struts-default">
 
-    <interceptors>
-        <interceptor name="adminInterceptor" class="meta2.interceptor.AdminInterceptor" />
-        <interceptor name="pessoaInterceptor" class="meta2.interceptor.PessoaInterceptor" />
-        <interceptor name="loginInterceptor" class="meta2.interceptor.LoginInterceptor" />
-        <interceptor-stack name="adminStack">
-            <interceptor-ref name="adminInterceptor" />
-            <interceptor-ref name="defaultStack" />
-        </interceptor-stack>
-        <interceptor-stack name="pessoaStack">
-            <interceptor-ref name="pessoaInterceptor" />
-            <interceptor-ref name="defaultStack" />
-        </interceptor-stack>
-        <interceptor-stack name="loginStack">
-            <interceptor-ref name="loginInterceptor" />
-            <interceptor-ref name="defaultStack" />
-        </interceptor-stack>
-    </interceptors>
+        <interceptors>
+            <interceptor name="loginInterceptor" class="meta2.interceptor.LoginInterceptor" />
+            <interceptor-stack name="loginStack">
+                <interceptor-ref name="loginInterceptor" />
+                <interceptor-ref name="defaultStack" />
+            </interceptor-stack>
+        </interceptors>
 
 
-    <default-interceptor-ref name="defaultStack" />
+        <default-interceptor-ref name="defaultStack" />
 
 
 
 
-    <default-action-ref name="index" />
+        <default-action-ref name="menuAdmin" />
 
 
 
 
-    <global-results>
-        <result name="error">/error.jsp</result>
-    </global-results>
+        <global-results>
+            <result name="error">/error.jsp</result>
+        </global-results>
 
-    <!-- all exceptions not caught by the application will lead to error.jsp -->
-    <global-exception-mappings>
-        <exception-mapping exception="java.lang.Exception" result="error" />
-    </global-exception-mappings>
-
-
+        <!-- all exceptions not caught by the application will lead to error.jsp -->
+        <global-exception-mappings>
+            <exception-mapping exception="java.lang.Exception" result="error" />
+        </global-exception-mappings>
 
 
-
-    <!-- 'index' action leads to the view provided by index.jsp -->
-    <action name="index">
-        <interceptor-ref name="loginStack" />
-        <result name="ADMIN">/menu.jsp</result>
-        <result name="PESSOA">register.jsp</result>
-        <result>/index.jsp</result>
-    </action>
-
-    <!-- 'login' action calls 'execute' in 'LoginAction' -->
-    <action name="login" class="meta2.action.LoginAction" method="execute">
-
-        <result name="ADMIN">/menu.jsp</result>
-        <result name="PESSOA">/register.jsp</result>
-        <result name="login">/index.jsp</result>
-    </action>
-
-        <action name="register" class="meta2.action.RegisterAction" method="execute">
-
-            <result name="success">menu.jsp</result>
+        <action name="menuAdmin">
+            <result>/menuAdmin.jsp</result>
         </action>
 
+
+
+        <!-- 'index' action leads to the view provided by index.jsp -->
+        <action name="index">
+            <result>/index.jsp</result>
+        </action>
+
+        <!-- 'login' action calls 'execute' in 'LoginAction' -->
+        <action name="login" class="meta2.action.LoginAction" method="execute">
+
+            <result name="ADMIN">/menuAdmin.jsp</result>
+            <result name="PESSOA">/listarEleicoes.jsp</result>
+            <result name="login">/index.jsp</result>
+        </action>
+
+        <action name="logout" class="meta2.action.LogoutAction" method="execute">
+            <interceptor-ref name="defaultStack" />
+            <result name="success">/index.jsp</result>
+            <result name="nome">/menu.jsp</result>
+        </action>
+
+        <action name="register" class="meta2.action.RegisterAction" method="execute">
+            <interceptor-ref name="defaultStack" />
+            <result name="success">menuAdmin.jsp</result>
+            <result name="none">register.jsp</result>
+        </action>
+
+        <action name="criarFaculdade" class="meta2.action.CriarFaculdade" method="execute">
+            <interceptor-ref name="defaultStack" />
+            <result name="success">menuAdmin.jsp</result>
+            <result name="none">criarFaculdade.jsp</result>
+        </action>
+
+        <action name="criarDepartamento" class="meta2.action.CriarDepartamento" method="execute">
+            <interceptor-ref name="defaultStack" />
+            <result name="success">menuAdmin.jsp</result>
+            <result name="none">criarDepartamento.jsp</result>
+        </action>
+
+        <action name="criarEleicao" class="meta2.action.CriarEleicao" method="execute">
+            <interceptor-ref name="defaultStack" />
+            <result name="success">menuAdmin.jsp</result>
+            <result name="none">criarEleicao.jsp</result>
+        </action>
+
+
+        <action name="editarEleicao" class="meta2.action.EditarEleicao" method="execute">
+            <interceptor-ref name="defaultStack" />
+            <result name="success">menuAdmin.jsp</result>
+            <result name="none">editarEleicao.jsp</result>
+        </action>
+
+
+        <action name="criarLista" class="meta2.action.CriarLista" method="execute">
+            <result name="success">menuAdmin.jsp</result>
+            <result name="none">criarLista.jsp</result>
+        </action>
+
+
+
+        <action name="associarCandidato" class="meta2.action.AssociarCandidato" method="execute">
+            <interceptor-ref name="defaultStack" />
+            <result name="success">menuAdmin.jsp</result>
+            <result name="none">associarCandidato.jsp</result>
+        </action>
+
+
+
+        <action name="adicionarMesaVoto" class="meta2.action.AdicionarMesaVoto" method="execute">
+            <interceptor-ref name="defaultStack" />
+            <result name="success">menuAdmin.jsp</result>
+            <result name="none">adicionarMesaVoto.jsp</result>
+        </action>
     </package>
+
+
+
+
 </struts>
+
+
+
+
+
+
+
+

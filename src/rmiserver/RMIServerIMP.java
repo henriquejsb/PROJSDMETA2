@@ -468,21 +468,33 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
     @Override
     public boolean registaPessoa(ConsolaINT consola, int tipo, String nome, String morada, int numero, int telefone, Date validadeCC, String pass, String dep) throws RemoteException{
         Pessoa novo;
+        System.out.println("----- A REGISTAR PESSOA-------");
+        System.out.println("n"+numero);
+        System.out.println("d"+dep);
         try{
             Pessoa aux = pesquisaPessoa(numero);
+
             if(aux != null){
-                
-                notifica(consola, "Esse CC já está associado!");
-                
+                if(consola!=null){
+                    notifica(consola, "Esse CC já está associado!");
+
+                }
+                System.out.println("Esse CC já está associado!");
                 return false;
+                
+
             }
+            System.out.println("DEPOIS 1IF");
             Departamento d = pesquisaDepartamento(dep);
             if(d == null){
-                
+                if(consola!=null){
                 notifica(consola, "Departamento " + dep + " não existe!");
                 
+                }
+                System.out.println("Departamento " + dep + " não existe!");
                 return false;
             }
+            System.out.println("Depois dos ifs");
             switch(tipo){
                 case 0:
                     novo = (Aluno) new Aluno(nome,morada,numero,telefone, validadeCC,pass,d);
@@ -639,15 +651,21 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
     
     @Override
     public boolean adicionarFaculdade(ConsolaINT consola, String novo) throws RemoteException{
+
         try{
-            if(pesquisaFaculdade(novo) == null){
+            Faculdade fac1 =pesquisaFaculdade(novo);
+            if(fac1 == null){
                 Faculdade fac = new Faculdade(novo);
                 faculdades.add(fac);
                 escreveFicheiro("faculdades.ser",faculdades);
                 return true;
             }
             else{
-                notifica(consola, "Já existe essa faculdade!");
+                System.out.println("5");
+                if(consola!=null){
+                    notifica(consola, "Já existe essa faculdade!");
+                }
+                System.out.println("Já existe essa faculdade!");
                 return false;
             }
         }catch(Exception e){
@@ -838,16 +856,25 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
         }
         String status = el.getStatus();
         if(status.equals("INVALID") || status.equals("OVER")){
-            notifica(consola, "Não é possível adicionar mesas de voto a essa eleição!");
+            if(consola!=null){
+                notifica(consola, "Não é possível adicionar mesas de voto a essa eleição!");
+            }
+            System.out.println("Não é possível adicionar mesa de voto a essa eleição!");
             return false;
         }
         if(el.isEleicaoNucleo()){
-            notifica(consola, "Essa é uma eleição de núcleo, já tem uma mesa associada no seu departamento!");
+            if(consola!=null){
+                notifica(consola, "Essa é uma eleição de núcleo, já tem uma mesa associada no seu departamento!");
+            }
+
             return false;
         }
         Departamento d = pesquisaDepartamento(dep);
         if(d == null){
-            notifica(consola, "Esse departamento não existe!");
+            if(consola!=null){
+                notifica(consola, "Esse departamento não existe!");
+            }
+
             return false;
         }
         EleicaoCG ecg = (EleicaoCG) el;
@@ -1000,7 +1027,9 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
     
     
     public Faculdade pesquisaFaculdade(String nome){
+        System.out.println("pesquisa-"+nome);
         for(Faculdade f: faculdades){
+            System.out.println("--");
             if(f.getNome().equals(nome)){
                 return f;
             }
@@ -1180,10 +1209,31 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
             eleicoes = eleicoestemp;
         }
     }
-    
-    
-    
-    
+
+    public ArrayList<String>  getDepartamentos() throws java.rmi.RemoteException{
+        ArrayList<String> array = new ArrayList<String>();
+        Faculdade aux;
+        for(int i =0; i<faculdades.size(); i++){
+            aux = faculdades.get(i);
+            for(int j=0; j<aux.getDepartamentos().size(); j++){
+                array.add(aux.getDepartamentos().get(i).getNome());
+            }
+
+        }
+
+        return array;
+
+    }
+
+    public ArrayList<String> getPessoas()  throws java.rmi.RemoteException{
+        ArrayList<String> array = new ArrayList<String> ();
+        if(pessoas == null) return null;
+        for( int i = 0; i<pessoas.size();i++){
+            array.add(pessoas.get(i).nome);
+        }
+        return array;
+    }
+
     /**
      * Main. São criadas 3 threads. 1 thread monitoriza as eleições para ver se já acabaram ou não. 1 delas é 
      * ativada quando o servidor se identifica como servidor principal, e serve para enviar 
@@ -1204,7 +1254,16 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
         
         RMIServerIMP server = new RMIServerIMP();
         server.leFicheiroAll();
-        
+        for(int i = 0; i<pessoas.size(); i++){
+            System.out.println(pessoas.get(i).cc);
+            System.out.println(pessoas.get(i).pwd);
+
+        }
+
+        for(int i = 0; i<faculdades.size(); i++){
+            System.out.println(faculdades.get(i).getNome());
+
+        }
         Thread t = new Thread(){
             @Override
             public synchronized void run(){
