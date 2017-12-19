@@ -17,18 +17,23 @@
 <div class="text-center" style="padding:50px 0">
     <div class="logo">Register</div>
     <!-- Main Form -->
-    <div class="login-form-1">
+    <div class="register-form-1">
         <form id="register-form" class="text-left" action="register" method="post">
             <div class="login-form-main-message"></div>
             <div class="main-login-form">
                 <div class="login-group">
-                    <html:radio property="tipo" value="Aluno" /> Aluno
-                    <html:radio property="tipo" value="Docente" /> Aluno
-                    <html:radio property="tipo" value="Funcionario" /> Funcionario
+
+                    Tipo de Pessoa
+                    <s:select id="tipo" name="tipo"
+                              list="{'Alunos','Docentes','Funcionários'}" label="Tipo de Pessoa" required="true"  />
+                    <div class="form-group">
+                        <label for="reg_nome" class="sr-only">Nome:: </label>
+                        <input type="text" class="form-control" required="true" id="reg_nome" name="nome" placeholder="Nome">
+                    </div>
 
                     <div class="form-group">
-                        <label for="reg_username" class="sr-only">Username: </label>
-                        <input type="text" class="form-control" required="true" id="reg_username" name="username" placeholder="Username">
+                        <label for="reg_numero" class="sr-only">Número CC: </label>
+                        <input type="number" class="form-control" size="8" required="true" id="reg_numero" name="numerocc" placeholder="Número CC">
                     </div>
 
                     <div class="form-group">
@@ -45,10 +50,6 @@
                         <input type="text" class="form-control" required="true" id="reg_morada" name="morada" placeholder="morada">
                     </div>
 
-                    <div class="form-group">
-                        <label for="reg_numero" class="sr-only">Número CC: </label>
-                        <input type="number" class="form-control" size="8" required="true" id="reg_numero" name="numero" placeholder="Número CC">
-                    </div>
 
                     <div class="form-group">
                         <label for="reg_numeroT" class="sr-only">Número de Telefone: </label>

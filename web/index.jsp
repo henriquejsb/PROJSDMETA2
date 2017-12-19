@@ -23,7 +23,7 @@
     <label for="lg_password" class="sr-only">Password: </label>
     <input type="password" class="form-control" required="true" id="lg_password" name="password" placeholder="password">
   </div>
-  <a href="register.jsp">Registar um maninho</a>
+  <a href="criarEleicao.jsp">Registar um maninho</a>
 <button action="submit">Login</button>
 </form>
   </body>

@@ -13,17 +13,47 @@ import static com.opensymphony.xwork2.Action.SUCCESS;
 public class RegisterAction extends ActionSupport implements SessionAware {
     private static final long serialVersionUID = 4L;
     private Map<String, Object> session;
-    private String username = null, password = null, cpassword = null, departamento = null,morada = null;
-    private int tipo, numero, telefone, dia, mes, ano;
-    // private Date data;
+    private String  password = null, cpassword = null, departamento = null,morada = null,nome = null,tipo = null;
+    private int   telefone=-1, dia=-1, mes=-1, ano=-1,numerocc=-1,tipoN;
+    private Date data;
 
-    public String getUsername() {
-        return username;
-    }
+    @Override
+    public String execute() throws RemoteException{
+            if(!password.equals(cpassword)) return NONE;
+            if(tipo.equals("Alunos")){
+                tipoN = 0;
+            }else if(tipo.equals("Docentes")){
+                tipoN =1;
+            }else if(tipo.equals("Funcionários")){
+                tipoN =2;
+            }else{
+                System.out.println("Erro ao receber tipo!!!!");
+                return NONE;
+            }
+            data = new Date(ano, mes, dia);
+            this.getMeta2Bean().setNome(this.nome);
+            this.getMeta2Bean().setCc(this.numerocc);
+            this.getMeta2Bean().setPassword(this.password);
+            this.getMeta2Bean().setTelefone(this.telefone);
+            this.getMeta2Bean().setTipo(this.tipoN);
+            this.getMeta2Bean().setData(this.data);
+            this.getMeta2Bean().setMorada(this.morada);
+            this.getMeta2Bean().setDepartamento(this.departamento);
+            if(this.getMeta2Bean().getRegisterPessoa()) {
+                session.put("cc", this.numerocc);
+                session.put("loggedin", true); // this marks the user as logged in
+                System.out.println("Criou pessoa! cc-"+this.numerocc);
+                return SUCCESS;
+            }
+            else{
+                System.out.println("Não criou pessoa!");
+                return NONE;
+            }
+        }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+
+
+
 
     public String getPassword() {
         return password;
@@ -57,21 +87,14 @@ public class RegisterAction extends ActionSupport implements SessionAware {
         this.morada = morada;
     }
 
-    public int getTipo() {
+    public String getTipo() {
         return tipo;
     }
 
-    public void setTipo(int tipo) {
+    public void setTipo(String tipo) {
         this.tipo = tipo;
     }
 
-    public int getNumero() {
-        return numero;
-    }
-
-    public void setNumero(int numero) {
-        this.numero = numero;
-    }
 
     public int getTelefone() {
         return telefone;
@@ -105,30 +128,30 @@ public class RegisterAction extends ActionSupport implements SessionAware {
         this.ano = ano;
     }
 
-    @Override
-    public String execute() throws RemoteException{
-        System.out.println("-----------");
-        // System.out.println("User:"+this.username);
-        //System.out.println(this.password+"-"+this.cpassword+"\n"+this.dia+"/"+this.mes+"/"+this.ano);
-        //data = new Date(this.ano, this.mes, this.dia);
-        return SUCCESS;
 
-        /*
-        if(this.username!= null && this.password!=null && this.cpassword!=null && this.password.equals(this.cpassword)){
-            this.getMeta2Bean().setUsername(this.username);
-            this.getMeta2Bean().setPassword(this.password);
-            this.getMeta2Bean().setPasswordc(this.cpassword);
-            if(this.getMeta2Bean().getRegister()){
-                return SUCCESS;
-            }
-            else{
-                return NONE;
-            }
-        }
-        else
-            return NONE;*/
+    public String getNome() {
+        return nome;
     }
 
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public int getNumerocc() {
+        return numerocc;
+    }
+
+    public void setNumerocc(int numerocc) {
+        this.numerocc = numerocc;
+    }
+
+    public Date getData() {
+        return data;
+    }
+
+    public void setData(Date data) {
+        this.data = data;
+    }
 
 
 

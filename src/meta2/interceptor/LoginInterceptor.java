@@ -25,7 +25,7 @@ public class LoginInterceptor implements Interceptor{
     public String intercept(ActionInvocation invocation) throws Exception {
         Map<String, Object> session = invocation.getInvocationContext().getSession();
 
-        if (session.get("loggedin") == null || ((String)session.get("loggedin")).equals("false"))
+        if (session.get("loggedin") == null)
         {
             return Action.LOGIN;
         }

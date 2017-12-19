@@ -6,6 +6,7 @@
 package rmiserver;
 
 import java.rmi.*;
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -39,8 +40,12 @@ public interface RMIServerINT extends Remote{
     public boolean adicionarMesaVoto(ConsolaINT consola, String eleicao, String dep) throws java.rmi.RemoteException;
     public void consultarDetalhesEleicao(ConsolaINT consola, String eleicao) throws java.rmi.RemoteException;
     public String liveStats(ConsolaINT consola) throws java.rmi.RemoteException;
-    
-    
+
+    public ArrayList<String> getPessoas( ) throws java.rmi.RemoteException ;
+
+    public ArrayList<String> getDepartamentos() throws java.rmi.RemoteException ;
+
+
 //RMI SECUNDARIO
    
 
