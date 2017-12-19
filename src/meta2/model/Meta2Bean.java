@@ -49,7 +49,7 @@ public class Meta2Bean {
         this.password = password;
     }
 
-    public boolean getLogin() throws RemoteException {
+    public String getLogin() throws RemoteException {
         return rmiserver.verificaLogin(this.cc,this.password);
     }
 }

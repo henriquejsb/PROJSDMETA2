@@ -29,7 +29,6 @@ public class Pessoa implements Serializable{
         this.validadeCC = validadeCC;
         this.pwd = pass;
         this.dep = dep;
-        
     }
 
     public String getNome() {
@@ -87,6 +86,8 @@ public class Pessoa implements Serializable{
     public int getNdocente(){
         return -1;
     }
+
+    public boolean isAdmin(){ return false; }
     
     public int getNfuncionario(){
         return -1;

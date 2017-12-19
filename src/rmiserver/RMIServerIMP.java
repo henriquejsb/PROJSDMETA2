@@ -68,7 +68,7 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
         config = new Config("config.cfg");
         
         
-        /*
+
         
         Faculdade f1 = new Faculdade("FCTUC");
         Departamento d2 = new Departamento("DEEC");
@@ -90,6 +90,7 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
         pessoas.add(new Aluno("Shakira","Coimbra",12121212,1,new Date(2017,3,1), "pass",d2 ));
         pessoas.add(new Docente("Adolfo Hitler","Coimbra",13131313,1,new Date(2017,3,1), "pass",d1 ));
         pessoas.add(new Funcionario("Lord Voldemort","Coimbra",14141414,1,new Date(2017,3,1), "pass",d1 ));
+        pessoas.add(new Admin(null,null,69696969,0,null,"pass",null));
         //MESAS DE VOTO
      
         //LISTAS
@@ -122,9 +123,15 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
         
         
         eleicoes.add(el1);
+
+        escreveFicheiro("eleicoes.ser",eleicoes);
+        escreveFicheiro("pessoas.ser",pessoas);
+        escreveFicheiro("faculdades.ser",faculdades);
+        escreveFicheiro("mesas.ser",mesas);
+
         
        
-        */
+
         
         
     }
@@ -205,23 +212,24 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
      */
     
     @Override 
-    public boolean verificaLogin(int cc, String pass) throws RemoteException{
+    public String verificaLogin(int cc, String pass) throws RemoteException{
         try{
         Pessoa p = pesquisaPessoa(cc);
-        if(p == null) return false;
+        if(p == null) return "FALSE";
         if(p.getPwd().equals(pass)){
             try{
             notificaLive(cc + " acaba de fazer login!");
             }catch(Exception e){
                 System.out.println("Erro a ligar a uma consola!");
             }
+            if(p.isAdmin()) return "ADMIN";
                
-            return true;
+            else return "PESSOA";
         }
         }catch(Exception e){
             System.out.println("Exception at verificaLogin: " + e);
         }
-        return false;
+        return "FALSE";
     }
     
     /**
@@ -350,7 +358,7 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
     public boolean confirmarCC(int cc) throws RemoteException{
         try{
         for(Pessoa pess: pessoas){
-            if(pess.getCC() == cc){
+            if(pess.getCC() == cc && !pess.isAdmin()){
                 try{
                 notificaLive(cc + "acaba de se preparar para votar!");
                 }catch(Exception e){
@@ -488,6 +496,10 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
                     novo = (Funcionario) new Funcionario(nome,morada,numero,telefone, validadeCC,pass,d);
                     pessoas.add(novo);
                     break;
+                case 3:
+                    novo = (Admin) new Admin(null,null,numero,0, null, pass, null);
+                    pessoas.add(novo);
+                    break;
             }
             escreveFicheiro("pessoas.ser",pessoas);
             return true;
@@ -525,6 +537,10 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
             Pessoa p = pesquisaPessoa(cc);
             if(p == null){
                 notifica(consola, "Não existe nenhuma pessoa associada a esse CC!");
+                return false;
+            }
+            if(p.isAdmin()){
+                notifica(consola,"Não pode associar um administrador!");
                 return false;
             }
             if(el.isEleicaoNucleo()){
@@ -882,6 +898,10 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
         Pessoa pess = pesquisaPessoa(cc);
         if(pess == null){
             notifica(consola, "Essa pessoa não existe!");
+            return;
+        }
+        if(pess.isAdmin()){
+            notifica(consola, "Administrador não vota!");
             return;
         }
         Eleicao el = pesquisaEleicao(eleicao);
@@ -1394,11 +1414,7 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
           /*
        
         
-        escreveFicheiro("eleicoes.ser",eleicoes);
-        escreveFicheiro("pessoas.ser",pessoas);
-        escreveFicheiro("faculdades.ser",faculdades);
-        escreveFicheiro("mesas.ser",mesas);
-        
+
            
         */
     }

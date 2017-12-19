@@ -526,7 +526,7 @@ class TerminalThread extends MainThread {
             String pwd = type2[3].replaceAll("\\s+", "");
             try{
             cc1 = Integer.parseInt(username);}catch(NumberFormatException e){ cc1 = -1; }
-            boolean login = false;
+            String login = null;
             boolean teste = false;
             do {
                 try {
@@ -541,11 +541,11 @@ class TerminalThread extends MainThread {
                     }
                 }
             } while (!teste);
-            if (login == true) {
+            if (login.equals("PESSOA")) {
                 this.cc = cc1;
                 return str = "Login Aceite";
 
-            } else if (login == false) {
+            } else  {
                 return str = "Login Errado";
             }
         } else if (tipo.equals("lista_vote")) {

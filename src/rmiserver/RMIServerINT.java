@@ -22,7 +22,7 @@ public interface RMIServerINT extends Remote{
     public String receberListas(int cc, String eleicao) throws java.rmi.RemoteException;
     public boolean enviarVoto(String eleicao, String lista, int cc, String dep) throws java.rmi.RemoteException;
     public void fechaMesa(String dep, String el) throws java.rmi.RemoteException;
-    public boolean verificaLogin(int cc, String pass) throws java.rmi.RemoteException;
+    public String verificaLogin(int cc, String pass) throws java.rmi.RemoteException;
     
     //CONSOLE ADMIN
     public boolean registaPessoa(ConsolaINT consola, int tipo, String nome, String morada, int numero, int telefone, Date validadeCC, String pass, String dep) throws java.rmi.RemoteException;

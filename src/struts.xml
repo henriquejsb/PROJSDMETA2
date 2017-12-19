@@ -14,7 +14,17 @@
     <package name="meta2" extends="struts-default">
 
     <interceptors>
+        <interceptor name="adminInterceptor" class="meta2.interceptor.AdminInterceptor" />
+        <interceptor name="pessoaInterceptor" class="meta2.interceptor.PessoaInterceptor" />
         <interceptor name="loginInterceptor" class="meta2.interceptor.LoginInterceptor" />
+        <interceptor-stack name="adminStack">
+            <interceptor-ref name="adminInterceptor" />
+            <interceptor-ref name="defaultStack" />
+        </interceptor-stack>
+        <interceptor-stack name="pessoaStack">
+            <interceptor-ref name="pessoaInterceptor" />
+            <interceptor-ref name="defaultStack" />
+        </interceptor-stack>
         <interceptor-stack name="loginStack">
             <interceptor-ref name="loginInterceptor" />
             <interceptor-ref name="defaultStack" />
@@ -22,7 +32,7 @@
     </interceptors>
 
 
-    <default-interceptor-ref name="loginStack" />
+    <default-interceptor-ref name="defaultStack" />
 
 
 
@@ -47,18 +57,22 @@
 
     <!-- 'index' action leads to the view provided by index.jsp -->
     <action name="index">
+        <interceptor-ref name="loginStack" />
+        <result name="ADMIN">/menu.jsp</result>
+        <result name="PESSOA">register.jsp</result>
         <result>/index.jsp</result>
     </action>
 
     <!-- 'login' action calls 'execute' in 'LoginAction' -->
     <action name="login" class="meta2.action.LoginAction" method="execute">
-        <interceptor-ref name="defaultStack" />
-        <result name="success">/menu.jsp</result>
+
+        <result name="ADMIN">/menu.jsp</result>
+        <result name="PESSOA">/register.jsp</result>
         <result name="login">/index.jsp</result>
     </action>
 
         <action name="register" class="meta2.action.RegisterAction" method="execute">
-            <interceptor-ref name="defaultStack" />
+
             <result name="success">menu.jsp</result>
         </action>
 
