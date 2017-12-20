@@ -8,9 +8,15 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Title</title>
+    <title>iVotas</title>
 </head>
 <body>
+
+<c:forEach var="eleicao" items="${meta2Bean.eleicoes}">
+    <c:out value="${eleicao.nome}"></c:out>
+</c:forEach>
+
+
 
 </body>
 </html>

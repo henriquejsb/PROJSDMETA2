@@ -19,8 +19,18 @@
 
         <interceptors>
             <interceptor name="loginInterceptor" class="meta2.interceptor.LoginInterceptor" />
+            <interceptor name="adminInterceptor" class="meta2.interceptor.AdminInterceptor" />
+            <interceptor name="pessoaInterceptor" class="meta2.interceptor.PessoaInterceptor"/>
             <interceptor-stack name="loginStack">
                 <interceptor-ref name="loginInterceptor" />
+                <interceptor-ref name="defaultStack" />
+            </interceptor-stack>
+            <interceptor-stack name="adminStack">
+                <interceptor-ref name="adminInterceptor" />
+                <interceptor-ref name="defaultStack" />
+            </interceptor-stack>
+            <interceptor-stack name="pessoaStack">
+                <interceptor-ref name="pessoaInterceptor" />
                 <interceptor-ref name="defaultStack" />
             </interceptor-stack>
         </interceptors>
@@ -31,98 +41,173 @@
 
 
 
-        <default-action-ref name="menuAdmin" />
+        <default-action-ref name="index" />
 
 
 
 
         <global-results>
-            <result name="error">/error.jsp</result>
+            <result name="login">WEB-INF/index.jsp</result>
+            <result name="error">/WEB-INF/error.jsp</result>
+            <result name="ADMIN"> WEB-INF/menuAdmin.jsp </result>
+            <result name="PESSOA"> WEB-INF/listarEleicoes.jsp </result>
         </global-results>
 
-        <!-- all exceptions not caught by the application will lead to error.jsp -->
         <global-exception-mappings>
             <exception-mapping exception="java.lang.Exception" result="error" />
         </global-exception-mappings>
 
 
-        <action name="menuAdmin">
-            <result>/menuAdmin.jsp</result>
-        </action>
+        <!-- all exceptions not caught by the application will lead to error.jsp
 
 
 
-        <!-- 'index' action leads to the view provided by index.jsp -->
+
+
+       'index' action leads to the view provided by index.jsp -->
         <action name="index">
-            <result>/index.jsp</result>
+            <interceptor-ref name="loginStack" />
+            <result>/WEB-INF/index.jsp</result>
         </action>
 
         <!-- 'login' action calls 'execute' in 'LoginAction' -->
         <action name="login" class="meta2.action.LoginAction" method="execute">
+            <result name="login">WEB-INF/index.jsp</result>
+            <result name="error">WEB-INF/error.jsp</result>
 
-            <result name="ADMIN">/menuAdmin.jsp</result>
-            <result name="PESSOA">/listarEleicoes.jsp</result>
-            <result name="login">/index.jsp</result>
+        </action>
+
+        <action name="votar" class="meta2.action.VotarAction" method="execute">
+            <interceptor-ref name="pessoaStack" />
+            <result name="success">/WEB-INF/listarEleicoes.jsp</result>
+            <result name="error">/WEB-INF/error.jsp</result>
         </action>
 
         <action name="logout" class="meta2.action.LogoutAction" method="execute">
             <interceptor-ref name="defaultStack" />
-            <result name="success">/index.jsp</result>
-            <result name="nome">/menu.jsp</result>
+            <result name="success">/WEB-INF/index.jsp</result>
+            <result name="nome">/WEB-INF/menu.jsp</result>
         </action>
 
+        <action name="paginaRegisto">
+            <interceptor-ref name="adminStack" />
+            <result>/WEB-INF/register.jsp</result>
+
+        </action>
+
+        <action name="paginaFaculdade">
+            <interceptor-ref name="adminStack" />
+            <result>WEB-INF/criarFaculdade.jsp</result>
+        </action>
+
+        <action name="paginaDepartamento">
+            <interceptor-ref name="adminStack" />
+            <result>WEB-INF/criarDepartamento.jsp</result>
+        </action>
+
+        <action name="novaEleicao">
+            <interceptor-ref name="adminStack" />
+            <result>WEB-INF/criarEleicao.jsp</result>
+        </action>
+
+        <action name="editEleicao">
+            <interceptor-ref name="adminStack" />
+            <result>WEB-INF/editarEleicao.jsp</result>
+        </action>
+
+        <action name="novaLista">
+            <interceptor-ref name="adminStack" />
+            <result>WEB-INF/criarLista.jsp</result>
+        </action>
+
+        <action name="associaCandidato">
+            <interceptor-ref name="adminStack" />
+            <result>WEB-INF/associarCandidato.jsp</result>
+        </action>
+
+        <action name="novaMesa">
+            <interceptor-ref name="adminStack" />
+            <result>WEB-INF/adicionarMesaVoto.jsp</result>
+        </action>
+
+        <action name="details">
+            <interceptor-ref name="adminStack" />
+            <result>WEB-INF/consultarDetalhesEleicao.jsp</result>
+        </action>
+
+
         <action name="register" class="meta2.action.RegisterAction" method="execute">
-            <interceptor-ref name="defaultStack" />
-            <result name="success">menuAdmin.jsp</result>
-            <result name="none">register.jsp</result>
+            <interceptor-ref name="adminStack" />
+            <result name="success">WEB-INF/menuAdmin.jsp</result>
+            <result name="none">WEB-INF/register.jsp</result>
         </action>
 
         <action name="criarFaculdade" class="meta2.action.CriarFaculdade" method="execute">
-            <interceptor-ref name="defaultStack" />
-            <result name="success">menuAdmin.jsp</result>
-            <result name="none">criarFaculdade.jsp</result>
+            <interceptor-ref name="adminStack" />
+            <result name="success">WEB-INF/menuAdmin.jsp</result>
+            <result name="none">WEB-INF/criarFaculdade.jsp</result>
         </action>
 
         <action name="criarDepartamento" class="meta2.action.CriarDepartamento" method="execute">
-            <interceptor-ref name="defaultStack" />
-            <result name="success">menuAdmin.jsp</result>
-            <result name="none">criarDepartamento.jsp</result>
+            <interceptor-ref name="adminStack" />
+            <result name="success">WEB-INF/menuAdmin.jsp</result>
+            <result name="none">WEB-INF/criarDepartamento.jsp</result>
         </action>
 
         <action name="criarEleicao" class="meta2.action.CriarEleicao" method="execute">
-            <interceptor-ref name="defaultStack" />
-            <result name="success">menuAdmin.jsp</result>
-            <result name="none">criarEleicao.jsp</result>
+            <interceptor-ref name="adminStack" />
+            <result name="success">WEB-INF/menuAdmin.jsp</result>
+            <result name="none">WEB-INF/criarEleicao.jsp</result>
         </action>
 
 
         <action name="editarEleicao" class="meta2.action.EditarEleicao" method="execute">
-            <interceptor-ref name="defaultStack" />
-            <result name="success">menuAdmin.jsp</result>
-            <result name="none">editarEleicao.jsp</result>
+            <interceptor-ref name="adminStack" />
+            <result name="success">WEB-INF/menuAdmin.jsp</result>
+            <result name="none">WEB-INF/editarEleicao.jsp</result>
         </action>
 
 
         <action name="criarLista" class="meta2.action.CriarLista" method="execute">
-            <result name="success">menuAdmin.jsp</result>
-            <result name="none">criarLista.jsp</result>
+            <interceptor-ref name="adminStack" />
+            <result name="success">WEB-INF/menuAdmin.jsp</result>
+            <result name="none">WEB-INF/criarLista.jsp</result>
+        </action>
+
+        <action name="eleicoes" class="meta2.action.EleicoesAction" method="execute">
+            <interceptor-ref name="pessoaStack" />
+            <result name="success">WEB-INF/votar.jsp</result>
+            <result name="none">WEB-INF/error.jsp</result>
+            <result name="error">WEB-INF/error.jsp</result>
         </action>
 
 
 
         <action name="associarCandidato" class="meta2.action.AssociarCandidato" method="execute">
-            <interceptor-ref name="defaultStack" />
-            <result name="success">menuAdmin.jsp</result>
-            <result name="none">associarCandidato.jsp</result>
+            <interceptor-ref name="adminStack" />
+            <result name="success">WEB-INF/menuAdmin.jsp</result>
+            <result name="none">WEB-INF/associarCandidato.jsp</result>
         </action>
 
 
 
         <action name="adicionarMesaVoto" class="meta2.action.AdicionarMesaVoto" method="execute">
-            <interceptor-ref name="defaultStack" />
-            <result name="success">menuAdmin.jsp</result>
-            <result name="none">adicionarMesaVoto.jsp</result>
+            <interceptor-ref name="adminStack" />
+            <result name="success">WEB-INF/menuAdmin.jsp</result>
+            <result name="error">WEB-INF/error.jsp</result>
+            <result name="none">WEB-INF/adicionarMesaVoto.jsp</result>
         </action>
+
+
+        <action name="getDetalhes" class="meta2.action.AjaxCalls" method="execute">
+        <result type="stream">
+            <param name="contentType">text/html</param>
+            <param name="inputName">inputStream</param>
+        </result>
+        </action>
+
+
+
     </package>
 
 

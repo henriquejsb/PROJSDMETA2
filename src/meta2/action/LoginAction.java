@@ -24,17 +24,17 @@ public class LoginAction extends ActionSupport implements SessionAware {
         if(this.cc!= -1 && this.password!=null){
             this.getMeta2Bean().setCc(this.cc);
             this.getMeta2Bean().setPassword(this.password);
-            if(this.getMeta2Bean().getLogin().equals("ADMIN")) {
-                session.put("cc", cc);
+            String res = this.getMeta2Bean().getLogin();
+            if(res.equals("ADMIN")) {
+                this.getMeta2Bean().setUser(this.cc);
                 session.put("loggedin", true); // this marks the user as logged in
                 session.put("admin", true);
                 return "ADMIN";
             }
-            else if(this.getMeta2Bean().getLogin().equals("PESSOA")){
-                session.put("cc", cc);
+            else if(res.equals("PESSOA")){
+                this.getMeta2Bean().setUser(this.cc);
                 session.put("loggedin", true); // this marks the user as logged in
                 session.put("admin", false);
-
                 return "PESSOA";
             }
             else{

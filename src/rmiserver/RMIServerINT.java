@@ -20,6 +20,7 @@ public interface RMIServerINT extends Remote{
     public boolean atribuirDepartamento(String rcv, String eleicao) throws java.rmi.RemoteException;
     public boolean confirmarCC(int cc) throws java.rmi.RemoteException;
     public String receberEleicoes(String dep) throws java.rmi.RemoteException;
+    public ArrayList<String> receberEleicoesWeb(int cc) throws java.rmi.RemoteException;
     public String receberListas(int cc, String eleicao) throws java.rmi.RemoteException;
     public boolean enviarVoto(String eleicao, String lista, int cc, String dep) throws java.rmi.RemoteException;
     public void fechaMesa(String dep, String el) throws java.rmi.RemoteException;
@@ -38,7 +39,7 @@ public interface RMIServerINT extends Remote{
     public boolean adicionarPessoaLista(ConsolaINT consola, String eleicao, String lista, int cc) throws java.rmi.RemoteException;
     public boolean editarEleicao(ConsolaINT consola, String eleicao, String nome, String desc) throws java.rmi.RemoteException;
     public boolean adicionarMesaVoto(ConsolaINT consola, String eleicao, String dep) throws java.rmi.RemoteException;
-    public void consultarDetalhesEleicao(ConsolaINT consola, String eleicao) throws java.rmi.RemoteException;
+    public String consultarDetalhesEleicao(ConsolaINT consola, String eleicao) throws java.rmi.RemoteException;
     public String liveStats(ConsolaINT consola) throws java.rmi.RemoteException;
 
     public ArrayList<String> getPessoas( ) throws java.rmi.RemoteException ;

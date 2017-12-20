@@ -6,6 +6,7 @@ import java.rmi.NotBoundException;
 import java.net.MalformedURLException;
 import java.rmi.RemoteException;
 import java.util.Date;
+import java.util.List;
 
 
 import rmiserver.Pessoa;
@@ -21,7 +22,15 @@ public class Meta2Bean {
     private String  departamento,morada,nome,faculdade,descricao,eleicao,editElei,lista;
     private int tipo, numero, telefone;
     Date data,dataFim;
+    private String erro;
 
+    public String getErro() {
+        return erro;
+    }
+
+    public void setErro(String erro) {
+        this.erro = erro;
+    }
 
     public Meta2Bean(){
         try {
@@ -42,6 +51,10 @@ public class Meta2Bean {
 
     public int getCc() {
         return cc;
+    }
+
+    public String getResultados() throws RemoteException {
+        return this.rmiserver.consultarDetalhesEleicao(null,this.eleicao);
     }
 
     public void setCc(int cc) {
@@ -106,6 +119,10 @@ public class Meta2Bean {
 
     public Date getData() {
         return data;
+    }
+
+    public boolean getVotar() throws RemoteException {
+        return rmiserver.enviarVoto(this.eleicao,this.lista,this.user,"WEB");
     }
 
     public void setData(Date data) {
@@ -180,15 +197,23 @@ public class Meta2Bean {
 
     }
 
-    public ArrayList<ArrayList<String>> getEleicoes() throws RemoteException{
-        ArrayList<ArrayList<String>> res = new ArrayList<>();
-        String [] departamentos = rmiserver.listarDepartamentos().split("\n");
-        for(String dep: departamentos){
+    public String[] getListas() throws RemoteException{
+        return rmiserver.receberListas(this.user,this.eleicao).split("\n");
+    }
 
-        }
+    public ArrayList<String> getEleicoes() throws RemoteException{
+        System.out.println("YO YO YO WABA");
+        return rmiserver.receberEleicoesWeb(this.user);
 
     }
 
+    public int getUser() {
+        return user;
+    }
+
+    public void setUser(int user) {
+        this.user = user;
+    }
 
     public boolean getCriaEleicao(String tipo) throws RemoteException {
         if(tipo.equals("Núcleo")){

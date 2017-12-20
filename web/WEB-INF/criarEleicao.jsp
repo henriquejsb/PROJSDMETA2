@@ -10,26 +10,8 @@
 <html>
 <head>
     <title>Criar Eleição</title>
-    <script type="text/javascript" src="js/jquery-3.1.1.min.js"></script>
-    <script type="text/javascript">
-        function callMyAction() {
-            $.ajax({
-                type : "GET",
-                url : "getmydata",
-                success : function(itr) {
-                    var x = "<ol>";
-                    $.each(itr.dataList, function() {
-                        x += "<li>" + this + "</li>";
-                    });
-                    x += "</ol>";
-                    $("#websparrow").html(x);
-                },
-                error : function(itr) {
-                    alert("No values found..!!");
-                }
-            });
-        }
-    </script>
+
+
 </head>
 <body>
 <div class="register-form-1">

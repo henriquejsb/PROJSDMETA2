@@ -23,8 +23,8 @@ public class AssociarCandidato extends ActionSupport implements SessionAware {
             System.out.println("Associou candidato "+this.cc+"à lista "+this.lista);
             return SUCCESS;
         }else{
-            System.out.println("Não associou candidato!!");
-            return NONE;
+            this.getMeta2Bean().setErro("Não foi possível associar esse candidato a essa lista!");
+            return ERROR;
         }
 
     }

@@ -23,8 +23,8 @@ public class AdicionarMesaVoto extends ActionSupport implements SessionAware {
             System.out.println("Adicionou mesa de voto!");
             return SUCCESS;
         }else{
-            System.out.println("Não adicionou mesa de voto!");
-            return NONE;
+            this.getMeta2Bean().setErro("Não é possível adicionar essa mesa a essa eleição!");
+            return ERROR;
         }
     }
 

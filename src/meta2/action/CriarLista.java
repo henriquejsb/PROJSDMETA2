@@ -10,18 +10,18 @@ import java.util.Map;
 public class CriarLista extends ActionSupport implements SessionAware {
     private static final long serialVersionUID = 4L;
     private Map<String, Object> session;
-    private String tipo = null, eleicao = null, lista = null;
+    private String tipoLista = null, eleicao = null, lista = null;
 
     @Override
     public String execute() throws RemoteException {
         int tipo1=-1;
         this.getMeta2Bean().setLista(this.lista);
         this.getMeta2Bean().setEleicao(this.eleicao);
-        if(tipo.equals("Docentes")){
+        if(tipoLista.equals("Docentes")){
             tipo1 = 2;
-        }else if(tipo.equals("Alunos")){
+        }else if(tipoLista.equals("Alunos")){
             tipo1 = 1;
-        }else if(tipo.equals("Funcionários")){
+        }else if(tipoLista.equals("Funcionários")){
             tipo1 = 3;
         }else{
             return NONE;
@@ -30,11 +30,10 @@ public class CriarLista extends ActionSupport implements SessionAware {
         this.getMeta2Bean().setTipo(tipo1);
 
         if(this.getMeta2Bean().getCriaLista()){
-            System.out.println("Criou Lista!");
             return SUCCESS;
         }else{
-            System.out.println("Não criou lista!");
-            return NONE;
+            this.getMeta2Bean().setErro("Não foi possível adicionar essa lista a essa eleição!");
+            return ERROR;
         }
 
 
@@ -48,12 +47,12 @@ public class CriarLista extends ActionSupport implements SessionAware {
         this.session = session;
     }
 
-    public String getTipo() {
-        return tipo;
+    public String getTipoLista() {
+        return tipoLista;
     }
 
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
+    public void setTipoLista(String tipo) {
+        this.tipoLista = tipo;
     }
 
     public String getEleicao() {

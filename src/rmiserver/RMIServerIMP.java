@@ -106,7 +106,7 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
         pnr.adicionaElemento(pesquisaPessoa(44444444));
         
         //ELEICOES
-        EleicaoCG el1 = new EleicaoCG("ELEICAO1","Descricao",new Date(2017-1900,1,1), new Date(2017-1900,12,2));
+        EleicaoCG el1 = new EleicaoCG("ELEICAO1","Descricao",new Date(2017-1900,1,1), new Date(2018-1900,12,2));
         
         el1.adicionaLista(notnei);
         el1.adicionaLista(nei);
@@ -117,7 +117,7 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
         
       
         
-        el1.votar("NEI",pesquisaPessoa(11111111),1,"DEI");
+        //el1.votar("NEI",pesquisaPessoa(11111111),1,"DEI");
         el1.votar(null,pesquisaPessoa(33333333),0,"DEEC");
         
         
@@ -414,6 +414,37 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
         }
         return res;
         
+    }
+
+    @Override
+    public ArrayList<String> receberEleicoesWeb(int cc) throws RemoteException{
+        ArrayList<String> res = new ArrayList<>();
+        Pessoa pess = pesquisaPessoa(cc);
+        try{
+            for(Eleicao el: eleicoes){
+                if(!el.verVotou(cc).equals("")) continue;
+                if(el.getStatus().equals("ACTIVE")){
+                    if(el.isEleicaoNucleo()){
+                        EleicaoNucleo en = (EleicaoNucleo) el;
+                        if(!pess.getDep().getNome().equals(en.getDepartamento().getNome())) continue;
+
+                    }
+                    else{
+                        EleicaoCG ecg = (EleicaoCG) el;
+                        if(!(pess.getNaluno() != -1 && !ecg.getListasAlunos().isEmpty() || pess.getNdocente() != -1 && !ecg.getListasDocentes().isEmpty() || pess.getNfuncionario() != -1 && !ecg.getListasFuncionarios().isEmpty())){
+                            continue;
+                        }
+
+                    }
+                    System.out.println(el.getNome());
+                    res.add(el.getNome());
+                }
+            }
+        }catch (Exception e){
+            System.out.println("Exception at receberEleicoes: " + e);
+        }
+        return res;
+
     }
     
     
@@ -894,19 +925,25 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
     
     
     @Override
-    public void consultarDetalhesEleicao(ConsolaINT consola, String eleicao) throws RemoteException{
+    public String consultarDetalhesEleicao(ConsolaINT consola, String eleicao) throws RemoteException{
+        System.out.println("YO RMI A BOMBAR");
         Eleicao el = pesquisaEleicao(eleicao);
         if( el == null){
-            notifica(consola, "Essa eleição não existe!");
-            return;
+            System.out.println("RMI BUSTED THAT SKINNY ONE");
+            if(consola != null) notifica(consola, "Essa eleição não existe!");
+            return "Essa eleição não existe!";
             
         }
         if(!el.getStatus().equals("OVER")){
-            notifica(consola, "Não é possível consultar os detalhes dessa eleição!");
-            return;
+            System.out.println("RMI HAS NOT ENDED THAT BOYYY");
+            if(consola != null) notifica(consola, "Não é possível consultar os detalhes dessa eleição!");
+            return "Não é possível consultar os detalhes dessa eleição!";
             
         }
-        notifica(consola, el.getStats());
+        System.out.println("I'M HERE BOY EHEHE");
+        String res ="OLA - " +  el.getStats();
+        if(consola != null) notifica(consola, res);
+        return res;
         
     }
     

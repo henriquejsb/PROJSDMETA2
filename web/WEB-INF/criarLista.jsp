@@ -12,14 +12,12 @@
     <title>Criar Lista</title>
 </head>
 <body>
-    <div class="register-form-1">
+
         <form id="create-form" class="text-left" action="criarLista" method="post">
-            <div class="create-form-main-message"></div>
-            <div class="main-create-form">
-                <div class="create-group">
+
                     Tipo de Lista:
-                    <s:select id="tipoElei" name="tipoElei"
-                              list="{'Alunos','Docentes','Funcionários}" label="Tipo de eleição" required="true"  />
+                    <s:select id="tipoLista" name="tipoLista"
+                              list="{'Alunos','Docentes','Funcionários'}" label="Tipo de lista" required="true"  />
 
 
 
