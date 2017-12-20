@@ -27,7 +27,7 @@ public interface RMIServerINT extends Remote{
     
     //CONSOLE ADMIN
     public boolean registaPessoa(ConsolaINT consola, int tipo, String nome, String morada, int numero, int telefone, Date validadeCC, String pass, String dep) throws java.rmi.RemoteException;
-    public void verVotou(ConsolaINT consola, int cc, String eleicao) throws java.rmi.RemoteException;
+    public String verVotou(ConsolaINT consola, int cc, String eleicao) throws java.rmi.RemoteException;
     public boolean adicionarFaculdade(ConsolaINT consola, String faculdade) throws java.rmi.RemoteException;
     public boolean adicionarDepartamento(ConsolaINT consola, String faculdade, String novo) throws java.rmi.RemoteException;
     public void subscribe(ConsolaINT consolaINT) throws java.rmi.RemoteException;

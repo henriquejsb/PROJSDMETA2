@@ -12,6 +12,7 @@
 <html>
   <head>
     <title>Login</title>
+    <meta charset="UTF-8">
   </head>
   <body>
 <form id = "loginForm" action="login" method="post">
@@ -25,6 +26,11 @@
   </div>
   <a href="criarEleicao.jsp">Registar um maninho</a>
 <button action="submit">Login</button>
+
+
+
 </form>
+
   </body>
 </html>
+

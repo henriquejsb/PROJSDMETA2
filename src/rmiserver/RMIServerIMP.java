@@ -921,33 +921,52 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
     
     
     @Override
-    public void verVotou(ConsolaINT consola, int cc, String eleicao) throws RemoteException{
+    public String verVotou(ConsolaINT consola, int cc, String eleicao) throws RemoteException{
         Pessoa pess = pesquisaPessoa(cc);
         if(pess == null){
-            notifica(consola, "Essa pessoa não existe!");
-            return;
+            if(consola!=null){
+                notifica(consola, "Essa pessoa não existe!");
+                return null;
+            }
+            return "Essa pessoa não existe!";
         }
         if(pess.isAdmin()){
-            notifica(consola, "Administrador não vota!");
-            return;
+            if(consola!=null){
+                notifica(consola, "Administrador não vota!");
+                return null;
+            }
+            return "Administrador não vota!";
         }
         Eleicao el = pesquisaEleicao(eleicao);
         if(el == null){
-            notifica(consola, "Essa eleição não existe!");
-            return;
+            if(consola!=null){
+                notifica(consola, "Essa eleição não existe!");
+                return null;
+            }
+            return "Essa eleição não existe!";
         }
         if(!(el.getStatus().equals("OVER") || el.getStatus().equals("ACTIVE"))){
-            notifica(consola, "Não é possível efetuar esta operação para esta eleição!");
-            return;
+            if (consola != null) {
+                notifica(consola, "Não é possível efetuar esta operação para esta eleição!");
+                return null;
+            }
+           return "Não é possível efetuar esta operação para esta eleição!";
         }
         String res = el.verVotou(cc);
         if(res.equals("")){
-            notifica(consola, "Essa pessoa não votou nessa eleição!");
-            return;
+            if(consola != null){
+                notifica(consola, "Essa pessoa não votou nessa eleição!");
+                return null;
+            }
+            return "Essa pessoa nãoo votou nessa eleição!";
         }
         String dep = res.split("\n")[0];
         String date = res.split("\n")[1];
+        if(consola == null){
+            return cc+" votou para "+eleicao+" no departamento "+ dep +" em "+date;
+        }
         notifica(consola, cc + " votou para " + eleicao + " no departamento " + dep +" em " + date );
+        return null;
     }
     
     /**

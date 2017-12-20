@@ -32,6 +32,10 @@ public class Meta2Bean {
         }
     }
 
+    public String call(){
+        return "";
+    }
+
     public RMIServerINT getRmiserver() {
         return rmiserver;
     }
@@ -180,12 +184,13 @@ public class Meta2Bean {
 
     }
 
-    public ArrayList<ArrayList<String>> getEleicoes() throws RemoteException{
-        ArrayList<ArrayList<String>> res = new ArrayList<>();
+    public ArrayList<String> getEleicoes() throws RemoteException{
+        ArrayList<String> res = new ArrayList<>();
         String [] departamentos = rmiserver.listarDepartamentos().split("\n");
         for(String dep: departamentos){
 
         }
+        return res;
 
     }
 
@@ -226,5 +231,9 @@ public class Meta2Bean {
 
     public ArrayList<String>  getDepartamentos() throws java.rmi.RemoteException{
         return rmiserver.getDepartamentos();
+    }
+
+    public String getVerVotou() throws RemoteException {
+        return rmiserver.verVotou(null, this.cc, this.eleicao);
     }
 }

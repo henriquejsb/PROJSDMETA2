@@ -9,8 +9,16 @@
 <html>
 <head>
     <title>iVotas</title>
+
 </head>
 <body>
+<form id = "loginForm" action="loginfb" method="post">
+
+    <button action="submit"><img src="http://www.nnnever.com/images/facebook-login-button.png" width="200px" height="auto"></button>
+
+
+
+</form>
 
 
 

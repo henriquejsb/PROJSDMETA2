@@ -61,7 +61,7 @@
         <action name="login" class="meta2.action.LoginAction" method="execute">
 
             <result name="ADMIN">/menuAdmin.jsp</result>
-            <result name="PESSOA">/listarEleicoes.jsp</result>
+            <result name="PESSOA">/menu.jsp</result>
             <result name="login">/index.jsp</result>
         </action>
 
@@ -123,6 +123,27 @@
             <result name="success">menuAdmin.jsp</result>
             <result name="none">adicionarMesaVoto.jsp</result>
         </action>
+
+        <action name="loginfb" class="meta2.action.FacebookLogin" method="execute">
+            <interceptor-ref name="defaultStack" />
+            <result name="redirect" type="redirect">${authorizationUrl}</result>
+            <result name="success">menu.jsp</result>
+            <result name="none">index.jsp</result>
+        </action>
+
+        <action name="FBAction" class="meta2.action.FacebookLogin" method="execute1">
+            <interceptor-ref name="defaultStack" />
+            <result>menu.jsp</result>
+        </action>
+
+
+        <action name="callAction" class="meta2.action.PessoaVoto" method="execute">
+            <result type="stream">
+                <param name="contentType">text/plain</param>
+            </result>
+        </action>
+
+
     </package>
 
 
