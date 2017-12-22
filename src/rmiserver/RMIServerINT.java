@@ -52,7 +52,7 @@ public interface RMIServerINT extends Remote{
     public boolean associarContaFb(String faceId, int cc) throws RemoteException;
 
     public String verificaLoginFacebook(String facebookId) throws java.rmi.RemoteException;
-    public boolean desassociarFb(String facebookId) throws RemoteException;
+    public boolean desassociarFb(int cc) throws RemoteException;
 
     public ArrayList<String> getDepartamentos() throws java.rmi.RemoteException ;
 

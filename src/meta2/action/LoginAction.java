@@ -21,29 +21,36 @@ public class LoginAction extends ActionSupport implements SessionAware {
 
     @Override
     public String execute() throws RemoteException {
+        System.out.println("Login-"+this.cc);
         if(this.cc!= -1 && this.password!=null){
             this.getMeta2Bean().setCc(this.cc);
             this.getMeta2Bean().setPassword(this.password);
             String res = this.getMeta2Bean().getLogin();
             if(res.equals("ADMIN")) {
+                System.out.println("Admin");
                 this.getMeta2Bean().setUser(this.cc);
                 session.put("username",this.cc);
                 session.put("loggedin", true); // this marks the user as logged in
                 session.put("admin", true);
+                System.out.println("return");
                 return "ADMIN";
             }
             else if(res.equals("PESSOA")){
+                System.out.println("Pessoa");
                 this.getMeta2Bean().setUser(this.cc);
                 session.put("username",this.cc);
                 session.put("loggedin", true); // this marks the user as logged in
                 session.put("admin", false);
+                System.out.println("Return");
                 return "PESSOA";
             }
             else{
+                System.out.println("fudeu");
                 return LOGIN;
             }
         }
         else
+            System.out.println("fudeu1");
             return LOGIN;
     }
 

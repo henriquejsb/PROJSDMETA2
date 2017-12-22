@@ -26,6 +26,7 @@ public class FacebookLogin extends ActionSupport implements SessionAware
     private static final Token EMPTY_TOKEN = null;
     private String code,eleicao;
     OAuth20Service service;
+    private int numerocc;
 
 
     public String postFacebook() throws Exception {
@@ -200,14 +201,22 @@ public class FacebookLogin extends ActionSupport implements SessionAware
     }
 
     public String desassociarFb() throws Exception {
-        String faceId = (String) session.get("fbid");
-        this.getMeta2Bean().setFacebookId(faceId);
+        this.getMeta2Bean().setCc(this.numerocc);
         if(this.getMeta2Bean().desassociarFb()){
             System.out.println("Conta desassociada!");
             return SUCCESS;
         }else{
+            System.out.println("Erro a desassociar conta!");
             return NONE;
         }
+    }
+
+    public int getNumerocc() {
+        return numerocc;
+    }
+
+    public void setNumerocc(int numerocc) {
+        this.numerocc = numerocc;
     }
 
     public String getEleicao() {

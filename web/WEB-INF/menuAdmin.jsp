@@ -56,10 +56,8 @@
 
 </form>
 
+<li><a href="desassociarContaFbJSP">Desassociar conta de Facebook</a></li>
 
-<form id = "dessFb" action="desassociarFbAd" method="post">
-    <button action="submit">Desassociar conta de Facebook</button>
-</form>
 
 
 </body>

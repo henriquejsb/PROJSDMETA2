@@ -323,21 +323,18 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
         return true;
     }
 
-    public boolean desassociarFb(String facebookId) throws RemoteException{
+    public boolean desassociarFb(int cc) throws RemoteException{
 
-        for(int i = 0; i<pessoas.size();i++){
-            String fbId = pessoas.get(i).getFacebookId();
-            if(fbId != null){
-                if(fbId.equals(facebookId)){
-                    pessoas.get(i).setFacebookId(null);
-                    System.out.println(  pessoas.get(i).getCC()+" acabou de desassociar conta de facebook!");
-                    return true;
-                }
-            }
-
+        Pessoa p = null;
+        p = pesquisaPessoa(cc);
+        if(p ==  null){
+            System.out.println("Pessoa não existe -"+cc);
+            return false;
         }
-
-        return false;
+        p.setFacebookId(null);
+        escreveFicheiro("pessoas.ser",pessoas);
+        System.out.println(  p.getCC()+" acabou de desassociar conta de facebook!");
+        return true;
     }
 
     @Override

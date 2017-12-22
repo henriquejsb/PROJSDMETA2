@@ -105,6 +105,12 @@
 
         </action>
 
+        <action name="desassociarContaFbJSP">
+            <interceptor-ref name="adminStack" />
+            <result>/WEB-INF/desassociarContaFb.jsp</result>
+
+        </action>
+
         <action name="verVoto">
             <interceptor-ref name="loginStack" />
             <result>WEB-INF/pessoaVoto.jsp</result>
@@ -279,17 +285,10 @@
         </action>
 
 
-        <action name="desassociarFbAd" class="meta2.action.FacebookLogin" method="desassociarFb">
+        <action name="desassociarFb" class="meta2.action.FacebookLogin" method="desassociarFb">
             <interceptor-ref name="defaultStack" />
             <result name="success">WEB-INF/menuAdmin.jsp</result>
             <result name="none">WEB-INF/menuAdmin.jsp</result>
-        </action>
-
-
-        <action name="desassociarFb" class="meta2.action.FacebookLogin" method="desassociarFb">
-            <interceptor-ref name="defaultStack" />
-            <result name="success">WEB-INF/listarEleicoes.jsp</result>
-            <result name="none">WEB-INF/listarEleicoes.jsp</result>
         </action>
 
 

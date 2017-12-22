@@ -307,7 +307,7 @@ public class Meta2Bean {
 
     public boolean desassociarFb() {
         try {
-            return rmiserver.desassociarFb(this.facebookId);
+            return rmiserver.desassociarFb(this.cc);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
