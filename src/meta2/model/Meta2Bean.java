@@ -21,6 +21,8 @@ public class Meta2Bean {
     private String password;
     private String  departamento,morada,nome,faculdade,descricao,eleicao,editElei,lista;
     private int tipo, numero, telefone;
+    private String eleaux;
+    private String facebookId;
     Date data,dataFim;
     private String erro;
 
@@ -55,6 +57,10 @@ public class Meta2Bean {
 
     public String getResultados() throws RemoteException {
         return this.rmiserver.consultarDetalhesEleicao(null,this.eleicao);
+    }
+
+    public String [] getInfoEleicao() throws RemoteException{
+        return this.rmiserver.infoEleicao(this.eleicao).split("\n");
     }
 
     public void setCc(int cc) {
@@ -125,6 +131,18 @@ public class Meta2Bean {
         return rmiserver.enviarVoto(this.eleicao,this.lista,this.user,"WEB");
     }
 
+    public String getEleaux(){
+        return this.eleaux;
+    }
+
+    public void setEleaux(String aux){
+        this.eleaux = aux;
+    }
+
+    public String getLiveEleicao() throws RemoteException{
+        return rmiserver.liveEleicao(this.eleaux);
+    }
+
     public void setData(Date data) {
         this.data = data;
     }
@@ -192,6 +210,10 @@ public class Meta2Bean {
 
     }
 
+    public void getLogout() throws RemoteException{
+        rmiserver.logout(this.user);
+    }
+
     public boolean getCriaDepartamento() throws RemoteException{
         return rmiserver.adicionarDepartamento(null,this.faculdade,this.departamento);
 
@@ -202,7 +224,6 @@ public class Meta2Bean {
     }
 
     public ArrayList<String> getEleicoes() throws RemoteException{
-        System.out.println("YO YO YO WABA");
         return rmiserver.receberEleicoesWeb(this.user);
 
     }
@@ -231,6 +252,10 @@ public class Meta2Bean {
 
     }
 
+    public String getLiveStats() throws RemoteException{
+        return rmiserver.liveStats(null);
+    }
+
     public boolean getCriaLista() throws RemoteException{
         return rmiserver.criarLista(null,this.eleicao,this.lista,this.tipo);
 
@@ -252,4 +277,42 @@ public class Meta2Bean {
     public ArrayList<String>  getDepartamentos() throws java.rmi.RemoteException{
         return rmiserver.getDepartamentos();
     }
+    public String getVerVotou() throws RemoteException {
+        return rmiserver.verVotou(null, this.cc, this.eleicao);
+    }
+
+    public String getLoginFb() throws RemoteException{
+        System.out.println("Meta2Bean get loginFB");
+        return rmiserver.verificaLoginFacebook(this.facebookId);
+    }
+
+    public String getFacebookId() {
+        return facebookId;
+    }
+
+    public void setFacebookId(String facebookId) {
+        this.facebookId = facebookId;
+    }
+
+
+    public boolean setFacebookId() {
+        try {
+            System.out.println("[Meta2Ben]"+this.cc);
+            return rmiserver.associarContaFb(this.facebookId,this.cc);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean desassociarFb() {
+        try {
+            return rmiserver.desassociarFb(this.facebookId);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return false;
+
+    }
+
 }

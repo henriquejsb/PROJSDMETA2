@@ -11,14 +11,14 @@ import java.util.Map;
 public class CriarEleicao extends ActionSupport implements SessionAware {
     private static final long serialVersionUID = 4L;
     private Map<String, Object> session;
-    private String departamento = null,descrição = null, eleicao = null, tipoElei = null;
+    private String departamento = null,descricao = null, eleicao = null, tipoElei = null;
     private int diaInicio, anoInicio, mesInicio, diaFim, anoFim, mesFim,horaInicio, minutosInicio, horaFim, minutosFim;
     private Date dataInicio, dataFim;
 
     @Override
     public String execute() throws RemoteException {
-        dataInicio = new Date(anoInicio, mesInicio, diaInicio,horaInicio,minutosInicio);
-        dataFim = new Date(anoFim, mesFim, diaFim,horaFim,minutosFim);
+        dataInicio = new Date(anoInicio - 1900, mesInicio - 1, diaInicio,horaInicio,minutosInicio);
+        dataFim = new Date(anoFim - 1900, mesFim - 1, diaFim,horaFim,minutosFim);
         if(dataInicio.after(dataFim)){
             System.out.println("Não pode ter data de fim anterior a data de inicio");
             return NONE;
@@ -26,7 +26,7 @@ public class CriarEleicao extends ActionSupport implements SessionAware {
 
         this.getMeta2Bean().setData(this.dataInicio);
         this.getMeta2Bean().setDataFim(this.dataFim);
-        this.getMeta2Bean().setDescricao(this.descrição);
+        this.getMeta2Bean().setDescricao(this.descricao);
         this.getMeta2Bean().setEleicao(this.eleicao);
         this.getMeta2Bean().setDepartamento(this.departamento);
 
@@ -88,12 +88,12 @@ public class CriarEleicao extends ActionSupport implements SessionAware {
         this.departamento = departamento;
     }
 
-    public String getDescrição() {
-        return descrição;
+    public String getDescricao() {
+        return descricao;
     }
 
-    public void setDescrição(String descrição) {
-        this.descrição = descrição;
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
     }
 
     public String getEleicao() {

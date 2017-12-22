@@ -12,21 +12,59 @@
 
 <html>
 <head>
+    <script src="../js/jquery.js"></script>
     <title>iVotas</title>
 </head>
 <body>
-<p>OI</p>
+
+<c:if test="${!admin}">
+<center>iVotas - Menu</center>
+</c:if>
 
 
-<% int conta = 0 ;%>
+<c:if test="${admin}">
+    <form id="menu" class="text-left" action="menu" method="post">
+        <button>Menu</button>
+    </form>
+</c:if>
+<script>
+    var conta = 0;
+</script>
  <c:forEach var="eleicao" items= "${meta2Bean.eleicoes}">
-     <% conta+= 1 ;%>
+     <script>conta += 1;</script>
     <a href="eleicoes?eleicao=${eleicao}">
         <c:out value="${eleicao}"></c:out>
     </a><br>
 </c:forEach>
 
-${conta > 0 ? "" : "Não há eleições disponíveis"}
+<p id="nha"></p>
+<script>
+    if(conta == 0){
+        $("#nha").html("Não há eleições disponíveis!");
+    }
+</script>
+
+
+
+<c:if test="${!admin}">
+
+<form id = "loginForm" action="addFb" method="post">
+    <button action="submit"><img src="http://www.nnnever.com/images/facebook-login-button.png" width="200px" height="auto"></button>
+
+
+</form>
+
+
+<li><a href="verVoto">Consultar seu voto</a></li>
+
+
+<ul class="nav navbar-nav navbar-right">
+    <form action="logout" method="post">
+        <button type="submit"><span class="glyphicon glyphicon-log-in"></span><font size="6">  Logout   </font></button>
+    </form>
+</ul>
+
+</c:if>
 
 </body>
 </html>

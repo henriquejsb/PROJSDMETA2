@@ -14,7 +14,18 @@
     <title>Title</title>
 </head>
 <body>
-<p>OI</p>
+<p>ERRO</p>
+<c:if test="${admin}">
+    <form id="menu" class="text-left" action="menu" method="post">
+        <button>Menu</button>
+    </form>
+</c:if>
+<c:if test="${!admin}">
+    <form id="listas" class="text-left" action="listarEleicoes" method="post">
+        <button>Menu</button>
+    </form>
+</c:if>
 <c:out value="${meta2Bean.erro}"/>
+<p><s:property value="exceptionStack" /></p>
 </body>
 </html>

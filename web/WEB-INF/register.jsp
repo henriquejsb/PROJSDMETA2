@@ -14,8 +14,14 @@
     <title>Registo</title>
 </head>
 <body>
+
+<c:if test="${admin}">
+    <form id="menu" class="text-left" action="menu" method="post">
+        <button>Menu</button>
+    </form>
+</c:if>
 <div class="text-center" style="padding:50px 0">
-    <div class="logo">Register</div>
+    <div class="logo">Registo</div>
     <!-- Main Form -->
     <div class="register-form-1">
         <form id="register-form" class="text-left" action="register" method="post">

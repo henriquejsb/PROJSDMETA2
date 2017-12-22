@@ -11,8 +11,11 @@
 <html>
 <head>
     <title>Menu Admin</title>
+    <script src="../js/jquery.js"></script>
+    <script src="../js/WebSocket.js"></script>
 </head>
 <body>
+
 <center>iVotas - Menu</center>
 
 <nav class="navbar navbar-inverse">
@@ -28,6 +31,8 @@
                     <li><a href="associaCandidato">Associar candidato a uma lista</a></li>
                     <li><a href="novaMesa">Adicionar mesa de voto a uma eleição</a></li>
                     <li><a href="details">Consultar detalhes de eleições passadas</a></li>
+                    <li><a href="verVoto">Ver onde votou uma pessoa para uma eleição</a></li>
+                    <li><a href="listarEleicoes">Listar eleições</a></li>
 
 
                 </ul>
@@ -38,7 +43,23 @@
                 </ul>
 
     </div>
+    <p id="stats">
+        <c:out value="${meta2Bean.liveStats}"></c:out>
+    </p>
+
 </nav>
+
+
+
+<form id = "loginForm" action="addFb" method="post">
+    <button action="submit"><img src="http://www.nnnever.com/images/facebook-login-button.png" width="200px" height="auto"></button>
+
+</form>
+
+
+<form id = "dessFb" action="desassociarFbAd" method="post">
+    <button action="submit">Desassociar conta de Facebook</button>
+</form>
 
 
 </body>

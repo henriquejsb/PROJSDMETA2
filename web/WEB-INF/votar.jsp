@@ -11,15 +11,16 @@
 <html>
 <head>
     <title>Votar</title>
-    <%--
-    Guardar cc da pessoa q ta logada
-    Metodo novo no RMI para receber as eleiçoes
-    AJAX para receber as listas?
-    Enviar voto
-    Adicionar WebSockets para dar update às pessoas que votaram até agora
 
 
-    --%>
+
+    <c:if test="${!admin}">
+        <form id="listas" class="text-left" action="listarEleicoes" method="post">
+            <button>Menu</button>
+        </form>
+    </c:if>
+
+
     <hi>LISTAS</hi>
     <form id="voto-form" action="votar" method="post">
     <select id="voto" name="voto">

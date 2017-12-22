@@ -27,12 +27,14 @@ public class LoginAction extends ActionSupport implements SessionAware {
             String res = this.getMeta2Bean().getLogin();
             if(res.equals("ADMIN")) {
                 this.getMeta2Bean().setUser(this.cc);
+                session.put("username",this.cc);
                 session.put("loggedin", true); // this marks the user as logged in
                 session.put("admin", true);
                 return "ADMIN";
             }
             else if(res.equals("PESSOA")){
                 this.getMeta2Bean().setUser(this.cc);
+                session.put("username",this.cc);
                 session.put("loggedin", true); // this marks the user as logged in
                 session.put("admin", false);
                 return "PESSOA";

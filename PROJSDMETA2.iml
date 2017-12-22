@@ -28,5 +28,8 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="asm-3.3" level="project" />
+    <orderEntry type="library" name="javax.websocket-api-1.0" level="project" />
+    <orderEntry type="library" name="async-http-client-1.9.31" level="project" />
+    <orderEntry type="library" name="scribejava-apis-5.0.0" level="project" />
   </component>
 </module>

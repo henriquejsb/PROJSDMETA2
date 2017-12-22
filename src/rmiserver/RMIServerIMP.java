@@ -10,6 +10,8 @@
 
 package rmiserver;
 
+import meta2.WebSocketINT;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -20,11 +22,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
-import java.rmi.AlreadyBoundException;
-import java.rmi.Naming;
-import java.rmi.NotBoundException;
-import java.rmi.RMISecurityManager;
-import java.rmi.RemoteException;
+import java.rmi.*;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.ExportException;
@@ -45,12 +43,14 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
     
     
     private static ArrayList<Pessoa> pessoas;
+    private static ArrayList<Pessoa> online;
     private static ArrayList<Faculdade> faculdades;
     private static ArrayList<MesaVoto> mesas;
     private static ArrayList<Eleicao> eleicoes;
     private static ArrayList<ConsolaINT> consolas;
     private static Config config;
     private static Registry r;
+    private static ArrayList<WebSocketINT> websockets;
    
     /**
      * Construtor da classe RMIServerIMP. Inicializa as ArrayLists que guardam as pessoas, as faculdades, as mesas de voto e as eleições,
@@ -65,8 +65,10 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
         mesas = new ArrayList<>();
         eleicoes = new ArrayList<>();
         consolas = new ArrayList<>();
+        online = new ArrayList<>();
         config = new Config("config.cfg");
-        
+        websockets = new ArrayList<>();
+
         
 
         
@@ -135,7 +137,20 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
         
         
     }
-    
+
+
+
+
+    @Override
+    public void subscribeWeb(WebSocketINT websocket){
+        System.out.println("New boy in town!");
+        this.websockets.add(websocket);
+    }
+
+    public void unsubscribeWeb(WebSocketINT websocket){
+        System.out.println("Boy ran away scared!");
+        this.websockets.remove(websocket);
+    }
         
         //---------------------------------------------------------------//
        //---------------------------------------------------------------//
@@ -192,8 +207,8 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
             }catch(Exception e){
                 System.out.println("Erro a ligar a uma consola!");
             }
-            mesas.add(mesa);  
- 
+            mesas.add(mesa);
+            notificaWeb("ADMIN");
             escreveFicheiro("mesas.ser",mesas);
             return true;
         }catch(Exception e){
@@ -222,6 +237,8 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
             }catch(Exception e){
                 System.out.println("Erro a ligar a uma consola!");
             }
+            online.add(p);
+            notificaWeb("ADMIN");
             if(p.isAdmin()) return "ADMIN";
                
             else return "PESSOA";
@@ -230,6 +247,124 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
             System.out.println("Exception at verificaLogin: " + e);
         }
         return "FALSE";
+    }
+
+    @Override
+    public String verificaLoginFacebook(String facebookId) throws RemoteException{
+        System.out.println("Verifica login");
+        Pessoa p = null;
+        for(int i = 0; i<pessoas.size();i++){
+            String fbId = pessoas.get(i).getFacebookId();
+            if(fbId != null){
+                if(fbId.equals(facebookId)){
+                    p = pessoas.get(i);
+                    System.out.println("pessoa existe-"+p.getFacebookId());
+                    break;
+                }
+            }
+
+        }
+        if(p == null){
+            System.out.println("Não existe conta associada com esse id!");
+            return "FALSE";
+        }
+        try{
+            System.out.println(p.getFacebookId()+"acaba de fazer login!");
+            notificaLive(p.getCC() + " acaba de fazer login!");
+            online.add(p);
+            notificaWeb("ADMIN");
+            if(p.isAdmin()) return "ADMIN-"+p.getCC();
+
+            else return "PESSOA-"+p.getCC();
+        }catch(Exception e){
+            System.out.println("Erro a ligar a uma consola!");
+        }
+
+
+        return "FALSE";
+    }
+
+
+    public boolean verificaFbId(String facebookId)  throws RemoteException {
+        //Verifica se já existe algum user com = faceId
+        //retorna true se existir;
+
+        for(int i = 0; i<pessoas.size();i++){
+            String fbId = pessoas.get(i).getFacebookId();
+            if(fbId != null){
+                if(fbId.equals(facebookId)){
+                    System.out.println("Já existe uma pessoa com esse id!");
+                    return true;
+                }
+            }
+
+        }
+
+        return false;
+    }
+
+    public boolean associarContaFb(String faceId, int cc) throws RemoteException{
+        System.out.println("A adiionar ao fb");
+        Pessoa p = pesquisaPessoa(cc);
+        if(p ==null){
+            System.out.println("Pessoa não existe!!");
+            return false;
+        }
+        System.out.println("pessoa existe");
+
+        if(verificaFbId(faceId)){
+            System.out.println("Já existe uma pessoa com esse id!");
+            return false;
+        }
+        System.out.println("A preparar os et");
+        p.setFacebookId(faceId);
+        System.out.println("dEPOIS DO SET");
+        escreveFicheiro("pessoas.ser",pessoas);
+        return true;
+    }
+
+    public boolean desassociarFb(String facebookId) throws RemoteException{
+
+        for(int i = 0; i<pessoas.size();i++){
+            String fbId = pessoas.get(i).getFacebookId();
+            if(fbId != null){
+                if(fbId.equals(facebookId)){
+                    pessoas.get(i).setFacebookId(null);
+                    System.out.println(  pessoas.get(i).getCC()+" acabou de desassociar conta de facebook!");
+                    return true;
+                }
+            }
+
+        }
+
+        return false;
+    }
+
+    @Override
+    public void logout(int cc) throws  RemoteException{
+        try{
+            Pessoa p = pesquisaPessoa(cc);
+            if(p == null) return;
+            for(Pessoa aux : online){
+                if(aux.getCC() == p.getCC()){
+                    online.remove(aux);
+                    notificaWeb("ADMIN");
+                    return;
+                }
+            }
+        }catch(Exception e){
+            System.out.println("Exception at logout: " + e);
+        }
+    }
+
+    public static void notificaWeb(String s){
+        for(WebSocketINT ws: websockets){
+            try {
+                ws.print_on_websocket(s);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
     }
     
     /**
@@ -272,6 +407,7 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
                     }catch(Exception ex){
                         System.out.println("Erro a ligar a uma consola!");
                     }
+                    notificaWeb("ELEICAO\n"+eleicao);
                     escreveFicheiro("eleicoes.ser",eleicoes);
                 }
                 return res;
@@ -295,6 +431,7 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
             MesaVoto mesa = pesquisaMesa(dep.replaceAll("_"," "), el.replaceAll("_"," "));
             if(mesa == null) return;
             mesas.remove(mesa);
+            notificaWeb("ADMIN");
             try{
                 notificaLive("Mesa de voto para " + mesa.getEleicao().getNome() + " em " + dep + " acaba de fechar!");
             }catch(Exception e){
@@ -303,6 +440,18 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
         }catch(Exception e){
             System.out.println("Exception at fechaMesa : " + e);
         }
+    }
+
+    @Override
+    public String liveEleicao(String eleicao) throws RemoteException{
+        try{
+            Eleicao el = pesquisaEleicao(eleicao);
+            if(el == null) return "";
+            return el.getLiveStats();
+        }catch(Exception e){
+            System.out.println("Exception at liveEleicao - " + e);
+        }
+        return "";
     }
     
     /**
@@ -424,6 +573,10 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
             for(Eleicao el: eleicoes){
                 if(!el.verVotou(cc).equals("")) continue;
                 if(el.getStatus().equals("ACTIVE")){
+                    if(pess.isAdmin()){
+                        res.add(el.getNome());
+                        continue;
+                    }
                     if(el.isEleicaoNucleo()){
                         EleicaoNucleo en = (EleicaoNucleo) el;
                         if(!pess.getDep().getNome().equals(en.getDepartamento().getNome())) continue;
@@ -570,20 +723,20 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
             boolean booleano = false;
             Eleicao el = pesquisaEleicao(eleicao);
             if(el == null){
-                notifica(consola, "Não existe essa eleição!");
+                if(consola != null) notifica(consola, "Não existe essa eleição!");
                 return false;
             }
             if(!el.getStatus().equals("NEW")){
-                notifica(consola, "Já não é possível adicionar membros a esta eleição!");
+                if(consola != null) notifica(consola, "Já não é possível adicionar membros a esta eleição!");
                 return false;
             }
             Pessoa p = pesquisaPessoa(cc);
             if(p == null){
-                notifica(consola, "Não existe nenhuma pessoa associada a esse CC!");
+                if(consola != null) notifica(consola, "Não existe nenhuma pessoa associada a esse CC!");
                 return false;
             }
             if(p.isAdmin()){
-                notifica(consola,"Não pode associar um administrador!");
+                if(consola != null) notifica(consola,"Não pode associar um administrador!");
                 return false;
             }
             if(el.isEleicaoNucleo()){
@@ -655,11 +808,11 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
 
             Faculdade fac = pesquisaFaculdade(faculdade);
             if(fac == null){
-                notifica(consola, "Não existe a faculdade " + faculdade);
+                if(consola != null) notifica(consola, "Não existe a faculdade " + faculdade);
                 return false;
             }
             if(pesquisaDepartamento(novo) != null){
-                notifica(consola, "Já existe esse departamento!");
+                if(consola != null) notifica(consola, "Já existe esse departamento!");
                 return false;
             }
             Departamento dep = new Departamento(novo);
@@ -720,16 +873,16 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
         try{
             Eleicao el1 = pesquisaEleicao(eleicao);
             if(el1 == null){
-                notifica(consola, "A eleição que pretende editar não existe!");
+                if(consola != null) notifica(consola, "A eleição que pretende editar não existe!");
                 return false;
             }
             if(!el1.getStatus().equals("NEW")){
-                notifica(consola, "Já não é possível editar essa eleição!");
+                if(consola != null) notifica(consola, "Já não é possível editar essa eleição!");
                 return false;
             }
             Eleicao el2 = pesquisaEleicao(nome);
             if(el2 != null){
-                notifica(consola, "Já existe uma eleição com o novo nome!");
+                if(consola != null) notifica(consola, "Já existe uma eleição com o novo nome!");
                 return false;
             }
             el1.setNome(nome);
@@ -761,12 +914,12 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
         try{
             Eleicao el = pesquisaEleicao(nome);
             if(el != null){
-                notifica(consola, "Já existe uma eleição com esse nome!");
+                if(consola != null) notifica(consola, "Já existe uma eleição com esse nome!");
                 return false;
             }
             Departamento d = pesquisaDepartamento(dep);
             if(d == null){
-                notifica(consola, "Esse departamento não existe!");
+                if(consola != null) notifica(consola, "Esse departamento não existe!");
                 return false;
             }
             EleicaoNucleo nova = new EleicaoNucleo(nome,desc,inicio,fim,d);
@@ -796,7 +949,7 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
         try{
             Eleicao el = pesquisaEleicao(nome);
             if(el != null){
-                notifica(consola, "Já existe uma eleição com esse nome!");
+                if(consola != null) notifica(consola, "Já existe uma eleição com esse nome!");
                 return false;
             }
             EleicaoCG nova = new EleicaoCG(nome,desc,inicio,fim);
@@ -826,11 +979,11 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
         try{
             Eleicao el = pesquisaEleicao(eleicao);
             if(el == null){
-                notifica(consola, "Não existe uma eleição com esse nome!");
+                if(consola != null) notifica(consola, "Não existe uma eleição com esse nome!");
                 return false;
             }
             if(!el.getStatus().equals("NEW")){
-                notifica(consola, "Já não é possível adicionar uma lista a esta eleição!");
+                if(consola != null) notifica(consola, "Já não é possível adicionar uma lista a esta eleição!");
                 return false;
             }
             
@@ -882,7 +1035,7 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
         boolean booleano = false;
         Eleicao el = pesquisaEleicao(eleicao);
         if(el == null){
-            notifica(consola, "Não existe essa eleição!");
+            if(consola != null) notifica(consola, "Não existe essa eleição!");
             return false;
         }
         String status = el.getStatus();
@@ -910,38 +1063,73 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
         }
         EleicaoCG ecg = (EleicaoCG) el;
         booleano = ecg.adicionaDepartamento(d);
-        if(booleano) escreveFicheiro("eleicoes.ser",eleicoes);
+        if(booleano){
+
+            escreveFicheiro("eleicoes.ser",eleicoes);
+        }
         return booleano;
     }
     
     
+
+    @Override
+    public String infoEleicao(String eleicao) throws RemoteException{
+        Eleicao el = pesquisaEleicao(eleicao);
+        String res = "";
+        if(el == null){
+            return "Não é possível mostrar detalhes";
+        }
+        if(el.isEleicaoNucleo()){
+            EleicaoNucleo en = (EleicaoNucleo) el;
+            res += "ELEIÇÂO NÚCLEO - "+ en.getNome() +"\n";
+            res += "DESCRIÇÃO - " + en.getDescricao() + "\n";
+            res += "DEPARTAMENTO - " + en.getDepartamento().getNome() + "\n";
+            res += "DATA INICIO - " + en.getStart().toString() + "\n";
+            res += "DATA FIM - " + en.getEnd().toString() + "\n";
+            res += "LISTAS\n-------------------\n";
+            res += en.getListasString();
+        } else{
+            EleicaoCG en = (EleicaoCG) el;
+            res += "ELEIÇÂO NÚCLEO - "+ en.getNome() +"\n";
+            res += "DESCRIÇÃO - " + en.getDescricao() + "\n";
+            res += "DATA INICIO - " + en.getStart().toString() + "\n";
+            res += "DATA FIM - " + en.getEnd().toString() + "\n";
+            res += "LISTAS ALUNOS\n-------------------\n";
+            res += en.getListasAlunosString();
+            res += "LISTAS DOCENTES\n-------------------\n";
+            res += en.getListasDocentesString();
+            res += "LISTAS FUNCIONARIOS\n-------------------\n";
+            res += en.getListasFuncionariosString();
+        }
+        return res;
+    }
+
+
     /**
-     * Método para consultar detalhes de uma eleição. Recebe o nome da eleição e pede as estatísticas 
+     * Método para consultar detalhes de uma eleição. Recebe o nome da eleição e pede as estatísticas
      * da eleição, que já tem de ter acabado
-     * @param consola ConsolaINT consola para notificações 
+     * @param consola ConsolaINT consola para notificações
      * @param eleicao String com nome da eleição que se pretende consultar
-     * @throws RemoteException 
+     * @throws RemoteException
      */
-    
-    
     @Override
     public String consultarDetalhesEleicao(ConsolaINT consola, String eleicao) throws RemoteException{
-        System.out.println("YO RMI A BOMBAR");
+
         Eleicao el = pesquisaEleicao(eleicao);
         if( el == null){
-            System.out.println("RMI BUSTED THAT SKINNY ONE");
+
             if(consola != null) notifica(consola, "Essa eleição não existe!");
             return "Essa eleição não existe!";
             
         }
         if(!el.getStatus().equals("OVER")){
-            System.out.println("RMI HAS NOT ENDED THAT BOYYY");
+
             if(consola != null) notifica(consola, "Não é possível consultar os detalhes dessa eleição!");
             return "Não é possível consultar os detalhes dessa eleição!";
             
         }
-        System.out.println("I'M HERE BOY EHEHE");
-        String res ="OLA - " +  el.getStats();
+
+        String res = el.getStats();
         if(consola != null) notifica(consola, res);
         return res;
         
@@ -955,36 +1143,56 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
      * @param eleicao String com nome da eleição
      * @throws RemoteException 
      */
-    
-    
+
+
+
     @Override
-    public void verVotou(ConsolaINT consola, int cc, String eleicao) throws RemoteException{
+    public String verVotou(ConsolaINT consola, int cc, String eleicao) throws RemoteException{
         Pessoa pess = pesquisaPessoa(cc);
         if(pess == null){
-            notifica(consola, "Essa pessoa não existe!");
-            return;
+            if(consola!=null){
+                notifica(consola, "Essa pessoa não existe!");
+                return null;
+            }
+            return "Essa pessoa não existe!";
         }
         if(pess.isAdmin()){
-            notifica(consola, "Administrador não vota!");
-            return;
+            if(consola!=null){
+                notifica(consola, "Administrador não vota!");
+                return null;
+            }
+            return "Administrador não vota!";
         }
         Eleicao el = pesquisaEleicao(eleicao);
         if(el == null){
-            notifica(consola, "Essa eleição não existe!");
-            return;
+            if(consola!=null){
+                notifica(consola, "Essa eleição não existe!");
+                return null;
+            }
+            return "Essa eleição não existe!";
         }
         if(!(el.getStatus().equals("OVER") || el.getStatus().equals("ACTIVE"))){
-            notifica(consola, "Não é possível efetuar esta operação para esta eleição!");
-            return;
+            if (consola != null) {
+                notifica(consola, "Não é possível efetuar esta operação para esta eleição!");
+                return null;
+            }
+            return "Não é possível efetuar esta operação para esta eleição!";
         }
         String res = el.verVotou(cc);
         if(res.equals("")){
-            notifica(consola, "Essa pessoa não votou nessa eleição!");
-            return;
+            if(consola != null){
+                notifica(consola, "Essa pessoa não votou nessa eleição!");
+                return null;
+            }
+            return "Essa pessoa nãoo votou nessa eleição!";
         }
         String dep = res.split("\n")[0];
         String date = res.split("\n")[1];
+        if(consola == null){
+            return cc+" votou para "+eleicao+" no departamento "+ dep +" em "+date;
+        }
         notifica(consola, cc + " votou para " + eleicao + " no departamento " + dep +" em " + date );
+        return null;
     }
     
     /**
@@ -998,10 +1206,10 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
     
     
     @Override
-    public String liveStats(ConsolaINT consola) throws RemoteException{
+    public String liveStats(ConsolaINT consola) throws RemoteException {
         String res = "";
         res += "MESAS DE VOTO LIGADAS:\n--------------------\n ";
-        for(MesaVoto mesa: mesas){
+        for (MesaVoto mesa : mesas) {
             res += mesa.getEleicao().getNome() + " - " + mesa.getDepartamento().getNome() + "\n";
         }
         /*
@@ -1014,12 +1222,12 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
             }
         }
         */
-        res += "ELEIÇÕES A DECORRER:\n--------------\n";
-        for(Eleicao e: eleicoes){
-            if(e.getStatus().equals("ACTIVE")){
-                
-                if(e.isEleicaoCG()){
-                    res += "ELEICAO CG - " + e.getLiveStats();
+        res += "\nELEIÇÕES A DECORRER:\n--------------\n";
+        for (Eleicao e : eleicoes) {
+            if (e.getStatus().equals("ACTIVE")) {
+
+                if (e.isEleicaoCG()) {
+                    res += "ELEICAO CG - " + e.getLiveStats() + "\n";
                      /*
                     EleicaoCG ecg = (EleicaoCG) e;
                    
@@ -1034,17 +1242,27 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
                     }
                     res += "\n";
                     */
-                    
+
                 }
-                if(e.isEleicaoNucleo()){
-                    res += "ELEICAO NUCLEO - " + e.getLiveStats();
+                if (e.isEleicaoNucleo()) {
+                    res += "ELEICAO NUCLEO - " + e.getLiveStats()+ "\n";
                 }
-                
+
             }
         }
+        res += "\nUSERS ONLINE:\n---------------\n";
+        for (Pessoa p : online) {
+            if (p.isAdmin()) res += "ADMIN - ";
+            if (p.getNaluno() != -1) res += "ALUNO - ";
+            if (p.getNdocente() != -1) res += "DOCENTE - ";
+            if (p.getNfuncionario() != -1) res += "FUNCIONARIO - ";
+            res += p.getCC() + " - " + p.getNome() + "\n";
+        }
         return res;
-        
+
     }
+
+
    
        
     
@@ -1306,14 +1524,18 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
             public synchronized void run(){
             Date aux;
             while(true){
+                System.out.println("Alive and well!");
                 try {
                     aux = new Date();
                     for(Eleicao el: eleicoes){
+                        System.out.println("LET'S SEE - " + el.getNome());
                         if(el.getStatus().equals("OVER")) continue;
                         if(el.getStatus().equals("INVALID")) continue;
                         if(el.getStart().getTime() < aux.getTime() ){
                             if(el.getStatus().equals("NEW") ){
+                                System.out.println("Found a newbie!");
                                 if(el.isEleicaoNucleo()){
+                                    System.out.println("It's a student newbie!");
                                     EleicaoNucleo en = (EleicaoNucleo) el;
                                     if(en.getListas().isEmpty()){
                                         el.setStatus("INVALID");
@@ -1325,8 +1547,10 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
                                         continue;
                                     }
                                 }else{
+                                    System.out.println("Hardcore newbie...");
                                     EleicaoCG ecg = (EleicaoCG) el;
                                     if(ecg.getListasAlunos().isEmpty() && ecg.getListasDocentes().isEmpty() && ecg.getListasFuncionarios().isEmpty()){
+                                        System.out.println("It's a handicap!");
                                         ecg.setStatus("INVALID");
                                         try{notificaLive(el.getNome() + " foi declarada inválida!");
                                         }catch(Exception e){}
@@ -1337,14 +1561,18 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
                                     }
                                 }
                                 if(el.getEnd().getTime() > aux.getTime()){
+                                    System.out.println("Newborn!!");
                                     el.setStatus("ACTIVE");
                                     try{notificaLive(el.getNome() + " acaba de começar!");
+                                        notificaWeb("ADMIN");
                                     }catch(Exception e){}
+
                                     escreveFicheiro("eleicoes.ser",eleicoes);
                                     System.out.println(el.getNome() + " acaba de começar!");
                                     continue;
                                 }
                                 else{
+                                    System.out.println("THIS ONE DIED!");
                                     el.setStatus("OVER");
                                     escreveFicheiro("eleicoes.ser",eleicoes);
                                     System.out.println(el.getNome() + " acabou agora!");
@@ -1353,8 +1581,10 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
                             }
 
                             if(el.getStatus().equals("ACTIVE")){
+                                System.out.println(("Let's try to kill this one!"));
                                 if(el.getEnd().getTime() < aux.getTime()){
                                     try{notificaLive(el.getNome() + " acabou agora!");
+                                        notificaWeb("ADMIN");
                                     }catch(Exception e){}
                                     System.out.println(el.getNome() + " acabou agora!");
                                     el.setStatus("OVER");
@@ -1374,10 +1604,31 @@ public class RMIServerIMP extends UnicastRemoteObject implements RMIServerINT{
         };
         t.start();
         
+        /*
         
-        
-      
-        
+      Thread testeWeb = new Thread(){
+          @Override
+          public void run() {
+              while(true) {
+                  System.out.println("Thread live and well..:");
+                  if (websocket != null) {
+                      System.out.println("WebSocket spotted!");
+                      try {
+                          ("OI AMIGO TENS CENAS?");
+                      } catch (RemoteException e) {
+                          e.printStackTrace();
+                      }
+                  }
+                  try {
+                      Thread.sleep(5000);
+                  } catch (InterruptedException e) {
+                      e.printStackTrace();
+                  }
+              }
+          }
+      };
+      //testeWeb.start();
+        */
         
         
         

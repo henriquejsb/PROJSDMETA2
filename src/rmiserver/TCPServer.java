@@ -557,7 +557,7 @@ class TerminalThread extends MainThread {
 
     }
 
-    private void menuVotar() {
+    private void menuVotar()  {
         //Recebe as listas do rmi e envia para o client. De seguida recebe o voto e envia para o rmi
         String listas = null;
         String voto = null;
@@ -565,6 +565,13 @@ class TerminalThread extends MainThread {
             writer.write("type | status ; logged | on; msg | Welcome to iVotas\n");
             writer.flush();
         } catch (SocketException ex) {
+
+            try {
+                super.h.logout(this.cc);
+            }catch(RemoteException e){
+
+            }
+            this.cc = -1;
             super.listTerminal.remove(this);
             System.out.println("Impossivel comunicar com o cliente!:" + listTerminal.size());
             try {
@@ -597,10 +604,18 @@ class TerminalThread extends MainThread {
             //Se não houverem listas
             System.out.println("Não existem listas para esta eleição");
             try {
+
+                super.h.logout(this.cc);
+                this.cc = -1;
+            }catch(RemoteException e){
+
+            }
+            try {
                 writer.write("type | error; msg | Não_existem_listas\n");
                 writer.flush();
             } catch (SocketException ex) {
                 super.listTerminal.remove(this);
+
                 System.out.println("Impossivel comunicar com o cliente!:" + listTerminal.size());
                 try {
                     this.join();
@@ -635,6 +650,13 @@ class TerminalThread extends MainThread {
             //-----------Receber Voto------------
             voto = reader.readLine();
         } catch (SocketTimeoutException ex) {
+            try {
+
+                super.h.logout(this.cc);
+                this.cc = -1;
+            }catch(RemoteException e){
+
+            }
             System.out.println("[T" + thread_number + "] Acabou o tempo: " + ex);
             outOfTime();
         } catch (SocketException ex) {
@@ -670,6 +692,13 @@ class TerminalThread extends MainThread {
         try {
             writer.write("type | votoRecebido; msg | true\n");
             writer.flush();
+            try {
+
+                super.h.logout(this.cc);
+                this.cc = -1;
+            }catch(RemoteException e){
+
+            }
         } catch (SocketException ex) {
             super.listTerminal.remove(this);
             System.out.println("Impossivel comunicar com o cliente!:" + listTerminal.size());

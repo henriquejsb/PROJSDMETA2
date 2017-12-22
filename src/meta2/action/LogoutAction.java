@@ -10,17 +10,18 @@ import java.util.Map;
 public class LogoutAction extends ActionSupport implements SessionAware {
     private static final long serialVersionUID = 4L;
     private Map<String, Object> session;
-    private int cc=-1;
+    private int user=-1;
 
     @Override
     public String execute() throws RemoteException {
-        this.cc = this.getMeta2Bean().getCc();
-        if(this.cc!= -1){
+        this.user = this.getMeta2Bean().getUser();
+        if(this.user!= -1){
             this.getMeta2Bean().setCc(0);
             this.getMeta2Bean().setPassword(null);
-            session.remove("username", this.cc);
+            session.remove("username", this.user);
             session.put("loggedin", false);
-            System.out.println(this.cc+" acabou de sair");
+            System.out.println(this.user+" acabou de sair");
+            this.getMeta2Bean().getLogout();
             return SUCCESS;
         }
         else

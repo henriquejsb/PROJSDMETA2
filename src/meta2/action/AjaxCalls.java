@@ -7,6 +7,7 @@ import org.apache.struts2.interceptor.SessionAware;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Map;
 
@@ -15,31 +16,67 @@ public class AjaxCalls extends ActionSupport implements SessionAware {
     private Map<String, Object> session;
     private String eleicao;
     private InputStream inputStream;
+    private String cc;
 
 
     public String execute() throws RemoteException {
-        System.out.println("EHEH + " + eleicao);
         this.getMeta2Bean().setEleicao(eleicao);
-        System.out.println("Editei bem mano");
         String res = this.getMeta2Bean().getResultados();
         System.out.println("-"+res+"-");
         try  {
             inputStream = new ByteArrayInputStream(res.getBytes("UTF-8"));
         }
         catch (UnsupportedEncodingException e) {
-            System.out.println("Aqui maninho + " + e);
         }catch(Exception e){
-            System.out.println("outra cena .. "+ e);
         }
         return SUCCESS;
     }
-    public String execute2() throws RemoteException {
 
-        this.getMeta2Bean().setEleicao(eleicao);
-        String res = this.getMeta2Bean().getResultados();
+    public String execute1() throws RemoteException {
+        System.out.println("CC-"+this.cc+"-EL-"+this.eleicao);
+        int cc1 = Integer.parseInt(this.cc);
+        this.getMeta2Bean().setCc(cc1);
+        this.getMeta2Bean().setEleicao(this.eleicao);
+        String res = this.getMeta2Bean().getVerVotou();
+        if( res!=null){
+            try {
+                inputStream = new ByteArrayInputStream(res.getBytes("UTF-8"));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            return SUCCESS;
+        }else{
+            return NONE;
+        }
+    }
 
+    public String liveStats() throws RemoteException{
+        String res = this.getMeta2Bean().getLiveStats();
+        try{
+            inputStream = new ByteArrayInputStream(res.getBytes("UTF-8"));
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }catch(Exception e){
+
+        }
         return SUCCESS;
     }
+
+    public String liveEleicao() throws RemoteException{
+        this.getMeta2Bean().setEleaux(this.eleicao);
+        String res = this.getMeta2Bean().getLiveEleicao();
+        try{
+            inputStream = new ByteArrayInputStream(res.getBytes("UTF-8"));
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }catch(Exception e){
+
+        }
+        return SUCCESS;
+    }
+
 
 
     public Meta2Bean getMeta2Bean() {
@@ -75,6 +112,15 @@ public class AjaxCalls extends ActionSupport implements SessionAware {
     @Override
     public void setSession(Map<String, Object> session) {
         this.session = session;
+    }
+
+
+    public String getCc() {
+        return cc;
+    }
+
+    public void setCc(String cc) {
+        this.cc = cc;
     }
 }
 

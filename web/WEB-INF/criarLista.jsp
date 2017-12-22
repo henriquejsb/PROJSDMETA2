@@ -12,7 +12,11 @@
     <title>Criar Lista</title>
 </head>
 <body>
-
+<c:if test="${admin}">
+    <form id="menu" class="text-left" action="menu" method="post">
+        <button>Menu</button>
+    </form>
+</c:if>
         <form id="create-form" class="text-left" action="criarLista" method="post">
 
                     Tipo de Lista:

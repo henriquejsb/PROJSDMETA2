@@ -9,11 +9,34 @@
 <%@ taglib prefix="s" uri="/struts-tags"%>
 <html>
 <head>
-    <title>Criar Eleição</title>
-
+    <title>Criar Faculdade</title>
+    <script src="/js/jquery.js"></script>
 
 </head>
 <body>
+<script>
+
+        window.onload = function() {
+            $("#tipoElei").change(function(){
+                if(this.value == "Conselho Geral"){
+                    $("#dep").val("NONE");
+                    $("#dep").hide();
+
+                }else{
+                    $("#dep").val("");
+                    $("#dep").show();
+                }
+            })
+
+        }
+
+</script>
+
+    <form id="menu" class="text-left" action="menu" method="post">
+        <button>Menu</button>
+    </form>
+
+
 <div class="register-form-1">
     <form id="create-form" class="text-left" action="criarEleicao" method="post">
         <div class="create-form-main-message"></div>
@@ -33,15 +56,15 @@
                     <label for="reg_descricao" class="sr-only">Descrição: </label>
                     <input type="text" class="form-control" required="true" id="reg_descricao" name="descricao" placeholder="Descrição breve">
                 </div>
-                <div class="form-group">
+                <div id="dep" class="form-group">
                     <label for="reg_departamento" class="sr-only">Departamento: </label>
-                    <input type="text" class="form-control" required="true" id="reg_departamento" name="departamento" placeholder="Departamento(eleiçoes cg não precisam editr">
+                    <input type="text" class="form-control"  id="reg_departamento" name="departamento" placeholder="Departamento(eleiçoes cg não precisam editr">
                 </div>
 
                 Data de ínicio:
                 <div class="form-group">
                     <label for="reg_anoI" class="sr-only">Ano: </label>
-                    <input type="number" min="2018"  class="form-control" required="true" id="reg_anoI" name="anoInicio" placeholder="Ano">
+                    <input type="number" min="2017"  class="form-control" required="true" id="reg_anoI" name="anoInicio" placeholder="Ano">
                 </div>
 
                 <div class="form-group">
@@ -55,17 +78,17 @@
                 </div>
                 <div class="form-group">
                     <label for="reg_horas" class="sr-only">Hora: </label>
-                    <input type="number" min="1" max="31" class="form-control" required="true" id="reg_horas" name="horaInicio" placeholder="Hora">
+                    <input type="number" min="0" max="23" class="form-control" required="true" id="reg_horas" name="horaInicio" placeholder="Hora">
                 </div>
                 <div class="form-group">
-                    <label for="reg_minutos" class="sr-only">Dia: </label>
-                    <input type="number" min="1" max="31" class="form-control" required="true" id="reg_minutos" name="minutosInicio" placeholder="Minuto">
+                    <label for="reg_minutos" class="sr-only">Minutos: </label>
+                    <input type="number" min="0" max="59" class="form-control" required="true" id="reg_minutos" name="minutosInicio" placeholder="Minuto">
                 </div>
 
                 Data de fim:
                 <div class="form-group">
                     <label for="reg_anoF" class="sr-only">Ano: </label>
-                    <input type="number" min="2018"  class="form-control" required="true" id="reg_anoF" name="anoFim" placeholder="Ano">
+                    <input type="number" min="2017"  class="form-control" required="true" id="reg_anoF" name="anoFim" placeholder="Ano">
                 </div>
 
                 <div class="form-group">
@@ -79,11 +102,11 @@
                 </div>
                 <div class="form-group">
                     <label for="reg_horasF" class="sr-only">Hora: </label>
-                    <input type="number" min="1" max="31" class="form-control" required="true" id="reg_horasF" name="horaFim" placeholder="Hora">
+                    <input type="number" min="0" max="23" class="form-control" required="true" id="reg_horasF" name="horaFim" placeholder="Hora">
                 </div>
                 <div class="form-group">
-                    <label for="reg_minutosF" class="sr-only">Dia: </label>
-                    <input type="number" min="1" max="31" class="form-control" required="true" id="reg_minutosF" name="minutosFim" placeholder="Minuto">
+                    <label for="reg_minutosF" class="sr-only">Minuto: </label>
+                    <input type="number" min="0" max="59" class="form-control" required="true" id="reg_minutosF" name="minutosFim" placeholder="Minuto">
                 </div>
             </div>
             <button type="submit" class="submit-button"><i class="fa fa-chevron-right"></i>Criar</button>

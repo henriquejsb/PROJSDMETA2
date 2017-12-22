@@ -8,9 +8,14 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Title</title>
+    <title>Associar candidato</title>
 </head>
 <body>
+<c:if test="${admin}">
+    <form id="menu" class="text-left" action="menu" method="post">
+        <button>Menu</button>
+    </form>
+</c:if>
 <div class="register-form-1">
     <form id="create-form" class="text-left" action="associarCandidato" method="post">
         <div class="create-form-main-message"></div>

@@ -10,15 +10,20 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <html>
 <head>
+
     <script src="../js/jquery.js"></script>
     <script src="../js/detalhesEleicao.js"></script>
-    <title>Title</title>
+    <title>Consultar detalhes</title>
 
 
 
 </head>
 <body>
-
+<c:if test="${admin}">
+    <form id="menu" class="text-left" action="menu" method="post">
+        <button>Menu</button>
+    </form>
+</c:if>
 
 <input type="text" class="form-control" required="true" id="reg_eleicao" name="eleicao" placeholder="Nome da eleição">
 

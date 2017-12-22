@@ -17,6 +17,7 @@ public class Pessoa implements Serializable{
     protected String morada;
     protected int cc;
     protected Date validadeCC;
+    protected String facebookId;
     protected int telefone;
     protected String pwd;
     protected Departamento dep ;
@@ -29,7 +30,17 @@ public class Pessoa implements Serializable{
         this.validadeCC = validadeCC;
         this.pwd = pass;
         this.dep = dep;
+        this.facebookId = null;
     }
+    public String getFacebookId() {
+        return facebookId;
+    }
+
+    public void setFacebookId(String facebookId) {
+        this.facebookId = facebookId;
+    }
+
+
 
     public String getNome() {
         return nome;

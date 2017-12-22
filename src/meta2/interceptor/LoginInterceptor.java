@@ -26,19 +26,15 @@ public class LoginInterceptor implements Interceptor{
         Map<String, Object> session = invocation.getInvocationContext().getSession();
 
         if (session.get("loggedin") != null) {
-            if (((boolean) session.get("loggedin"))) {
-                if ((boolean) session.get("admin")) {
-                    return "ADMIN";
-                } else {
-                    return "PESSOA";
-                }
+            if (!((boolean) session.get("loggedin"))) {
+               return Action.LOGIN;
             } else{
                 return invocation.invoke();
             }
         }
         else
         {
-            return invocation.invoke();
+            return Action.LOGIN;
         }
     }
 }

@@ -12,6 +12,12 @@
     <title>Editar eleição</title>
 </head>
 <body>
+
+<c:if test="${admin}">
+    <form id="menu" class="text-left" action="menu" method="post">
+        <button>Menu</button>
+    </form>
+</c:if>
 <div class="register-form-1">
     <form id="create-form" class="text-left" action="editarEleicao" method="post">
         <div class="create-form-main-message"></div>

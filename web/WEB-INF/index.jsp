@@ -10,10 +10,10 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
          pageEncoding="ISO-8859-1"%>
 <html>
-  <head>
-    <title>Login</title>
-  </head>
-  <body>
+<head>
+  <title>Login</title>
+</head>
+<body>
 <form id = "loginForm" action="login" method="post">
   <div class="form-group">
     <label for="lg_username" class="sr-only">Username: </label>
@@ -23,8 +23,15 @@
     <label for="lg_password" class="sr-only">Password: </label>
     <input type="password" class="form-control" required="true" id="lg_password" name="password" placeholder="password">
   </div>
-  <a href="criarEleicao.jsp">Registar um maninho</a>
-<button action="submit">Login</button>
+  <button action="submit">Login</button>
+
+
 </form>
-  </body>
+<form id = "loginForm1" action="loginfb" method="post">
+  <button action="submit"><img src="http://www.nnnever.com/images/facebook-login-button.png" width="200px" height="auto"></button>
+
+
+</form>
+
+</body>
 </html>

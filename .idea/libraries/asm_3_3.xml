@@ -16,6 +16,11 @@
       <root url="jar://$PROJECT_DIR$/lib/xwork-core-2.3.16.3.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/struts2-core-2.3.16.3.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/struts2-json-plugin-2.3.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/scribejava-apis-5.0.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/scribejava-core-5.0.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/slf4j-api-1.7.13.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/slf4j-simple-1.7.13.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/json-simple.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
